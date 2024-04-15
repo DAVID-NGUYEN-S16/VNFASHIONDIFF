@@ -221,11 +221,11 @@ def main():
 
     # We need to initialize the trackers we use, and also store our configuration.
     # The trackers initializes automatically on the main process.
-    if accelerator.is_main_process:
-        tracker_config = dict(vars(config))
-        # print(tracker_config)
-        # tracker_config.pop("validation_prompts")
-        accelerator.init_trackers(config.tracker_project_name, tracker_config)
+    # if accelerator.is_main_process:
+    #     tracker_config = dict(vars(config))
+    #     # print(tracker_config)
+    #     # tracker_config.pop("validation_prompts")
+    #     accelerator.init_trackers(config.tracker_project_name, tracker_config)
 
 
 
