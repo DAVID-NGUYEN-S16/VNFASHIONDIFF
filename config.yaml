@@ -56,7 +56,7 @@ noise_offset : 0
 validation_epochs : 2
 tracker_project_name : "text2image-fine-tune"
 data:
-  train: /kaggle/working/data_train.json
-  eval: /kaggle/working/data_eval.json
+  train: /kaggle/input/data-train/data_train.json
+  eval: /kaggle/input/data-train/data_test.json
   size: 224
 
