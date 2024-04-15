@@ -160,20 +160,21 @@ def main():
         return {"pixel_values": pixel_values, "input_ids": input_ids}
     
     train_dataset = DataFASSHIONDIFF(
-        path_meta = "/kaggle/working/data.json",
-        size= 224,
+        path_meta = config.data['train'],
+        size= config.data['size'],
         interpolation="bicubic",
         flip_p=0.5, 
-        tokenizer = tokenizer
+        tokenizer = tokenizer,
+        train = True
     )
-    # DataLoaders creation:
+    
     train_dataloader = torch.utils.data.DataLoader(
-        train_dataset,
-        shuffle=True,
-        collate_fn=collate_fn,
-        batch_size=config.train_batch_size,
-        num_workers=config.dataloader_num_workers,
-    )
+            train_dataset,
+            shuffle=True,
+            collate_fn=collate_fn,
+            batch_size=config.train_batch_size,
+        )
+    
 
     # Scheduler and math around the number of training steps.
     overrode_max_train_steps = False
@@ -248,21 +249,6 @@ def main():
     )
     
     
-    train_dataset = DataFASSHIONDIFF(
-        path_meta = config.data['train'],
-        size= config.data['size'],
-        interpolation="bicubic",
-        flip_p=0.5, 
-        tokenizer = tokenizer,
-        train = True
-    )
-    
-    train_dataloader = torch.utils.data.DataLoader(
-            train_dataset,
-            shuffle=True,
-            collate_fn=collate_fn,
-            batch_size=config.train_batch_size,
-        )
     
     min_loss = None
     for epoch in tqdm(range(first_epoch, config.num_train_epochs)):
