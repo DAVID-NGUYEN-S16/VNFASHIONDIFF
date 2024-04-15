@@ -94,13 +94,13 @@ class DataFASSHIONDIFF(Dataset):
             image = image.convert("RGB")
 
         # default to score-sde preprocessing
-        img = np.array(image).astype(np.uint8)
-        crop = min(img.shape[0], img.shape[1])
-        h, w, = img.shape[0], img.shape[1]
-        img = img[(h - crop) // 2:(h + crop) // 2,
-              (w - crop) // 2:(w + crop) // 2]
+        # img = np.array(image).astype(np.uint8)
+        # crop = min(img.shape[0], img.shape[1])
+        # h, w, = img.shape[0], img.shape[1]
+        # img = img[(h - crop) // 2:(h + crop) // 2,
+        #       (w - crop) // 2:(w + crop) // 2]
 
-        image = Image.fromarray(img)
+        # image = Image.fromarray(img)
         
         
         
