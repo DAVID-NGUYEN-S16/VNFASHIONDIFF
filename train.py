@@ -228,7 +228,7 @@ def main():
     #     accelerator.init_trackers(config.tracker_project_name, tracker_config)
 
 
-
+    print("Running training")
 
     logger.info("***** Running training *****")
     logger.info(f"  Num examples = {len(train_dataset)}")
@@ -256,6 +256,7 @@ def main():
         train_loss = 0.0
         for step, batch in tqdm(enumerate(train_dataloader), total = len(train_dataloader)):
             with accelerator.accumulate(model):
+                print(global_step)
                 # Convert images to latent space
                 batch["pixel_values"] =batch["pixel_values"].to(accelerator.device).to(weight_dtype)
                 batch["input_ids"] =batch["input_ids"].to(accelerator.device).to(weight_dtype).long()
@@ -285,6 +286,7 @@ def main():
 
             if global_step >= config.max_train_steps:
                 break
+            global_step+=1
         
         train_loss = round(train_loss/len(train_dataloader), 4)
 
