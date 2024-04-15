@@ -2,6 +2,8 @@ import glob
 import torchvision.transforms as transforms
 import os
 from torch.utils.data import Dataset, DataLoader
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 from PIL import Image
 import numpy as np
 import json
