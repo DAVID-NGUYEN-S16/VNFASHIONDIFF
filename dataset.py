@@ -62,7 +62,7 @@ class DataFASSHIONDIFF(Dataset):
 
             self.transform = transforms.Compose(
                 [
-                    transforms.Resize(self.size, interpolation=transforms.InterpolationMode.BILINEAR),
+                    transforms.Resize((self.size, self.size), interpolation=transforms.InterpolationMode.BILINEAR),
                     transforms.RandomHorizontalFlip(p= flip_p),
                     transforms.ToTensor(),
                     transforms.Normalize([0.5], [0.5]),
@@ -73,7 +73,7 @@ class DataFASSHIONDIFF(Dataset):
             # Define the validation and testing pipeline
             self.transform = transforms.Compose(
                 [
-                    transforms.Resize(self.size, interpolation=transforms.InterpolationMode.BILINEAR),
+                    transforms.Resize((self.size, self.size), interpolation=transforms.InterpolationMode.BILINEAR),
                     transforms.ToTensor(),
                     transforms.Normalize([0.5], [0.5]),
                 ]
