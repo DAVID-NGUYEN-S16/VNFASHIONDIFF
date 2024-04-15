@@ -302,7 +302,12 @@ def main():
         train_loss = round(train_loss/len(train_dataloader), 4)
 
         accelerator.log({"train_loss": train_loss}, step=global_step)
-
+        run.log(
+            {
+                
+                'Train loss': train_loss, 
+            }
+        )
         if min_loss == None or train_loss <= min_loss:
             save_path = os.path.join(config.output_dir, f"best")
             accelerator.save_state(save_path)
