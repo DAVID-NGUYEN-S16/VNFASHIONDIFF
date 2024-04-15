@@ -258,7 +258,7 @@ def main():
             with accelerator.accumulate(model):
                 # Convert images to latent space
                 batch["pixel_values"] =batch["pixel_values"].to(accelerator.device).to(weight_dtype)
-                batch["input_ids"] =batch["input_ids"].to(accelerator.device).to(weight_dtype)
+                batch["input_ids"] =batch["input_ids"].to(accelerator.device).to(weight_dtype).long()
                 
                 
                 
