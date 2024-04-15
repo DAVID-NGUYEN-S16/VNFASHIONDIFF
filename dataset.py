@@ -112,6 +112,9 @@ class DataFASSHIONDIFF(Dataset):
             text, max_length=self.tokenizer.model_max_length, padding="max_length", truncation=True, return_tensors="pt"
         ).input_ids
         
-        
-        example["pixel_values"] = self.transform(image)
+        try:
+            example["pixel_values"] = self.transform(image)
+        except Exception as e:
+            print(f"Error processing image at path: {path_image}")
+            print(f"Error message: {str(e)}")
         return example
