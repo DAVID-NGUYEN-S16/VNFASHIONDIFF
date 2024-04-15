@@ -257,6 +257,7 @@ def main():
         for step, batch in tqdm(enumerate(train_dataloader), total = len(train_dataloader)):
             with accelerator.accumulate(model):
                 print(global_step)
+                break
                 # Convert images to latent space
                 batch["pixel_values"] =batch["pixel_values"].to(accelerator.device).to(weight_dtype)
                 batch["input_ids"] =batch["input_ids"].to(accelerator.device).to(weight_dtype).long()
