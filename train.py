@@ -67,7 +67,11 @@ def load_models(config):
     )
     return model, tokenizer
 
-
+def collate_fn(examples):
+        pixel_values = torch.stack([example["pixel_values"] for example in examples])
+        pixel_values = pixel_values.to(memory_format=torch.contiguous_format).float()
+        input_ids = torch.stack([example["input_ids"] for example in examples])
+        return {"pixel_values": pixel_values, "input_ids": input_ids}
 
 def main():
     
@@ -153,11 +157,7 @@ def main():
 
 
 
-    def collate_fn(examples):
-        pixel_values = torch.stack([example["pixel_values"] for example in examples])
-        pixel_values = pixel_values.to(memory_format=torch.contiguous_format).float()
-        input_ids = torch.stack([example["input_ids"] for example in examples])
-        return {"pixel_values": pixel_values, "input_ids": input_ids}
+    
     
     train_dataset = DataFASSHIONDIFF(
         path_meta = config.data['train'],
@@ -174,6 +174,22 @@ def main():
             collate_fn=collate_fn,
             batch_size=config.train_batch_size,
         )
+    
+    test_dataset = DataFASSHIONDIFF(
+        path_meta = config.data['train'],
+        size= config.data['size'],
+        interpolation="bicubic",
+        flip_p=0.5, 
+        tokenizer = tokenizer,
+        train = False
+    )
+    
+    test_dataloader = torch.utils.data.DataLoader(
+            test_dataset,
+            shuffle=True,
+            collate_fn=collate_fn,
+            batch_size=config.train_batch_size,
+    )
     
 
     # Scheduler and math around the number of training steps.
@@ -253,11 +269,10 @@ def main():
     
     min_loss = None
     for epoch in tqdm(range(first_epoch, config.num_train_epochs)):
+        model.train()
         train_loss = 0.0
         for step, batch in tqdm(enumerate(train_dataloader), total = len(train_dataloader)):
             with accelerator.accumulate(model):
-                print(global_step)
-                break
                 # Convert images to latent space
                 batch["pixel_values"] =batch["pixel_values"].to(accelerator.device).to(weight_dtype)
                 batch["input_ids"] =batch["input_ids"].to(accelerator.device).to(weight_dtype).long()
@@ -288,14 +303,42 @@ def main():
             if global_step >= config.max_train_steps:
                 break
             global_step+=1
+            break
+        
+        model.eval()
+        test_loss = 0.0
+        for step, batch in tqdm(enumerate(test_dataloader), total = len(test_dataloader)):
+            with accelerator.accumulate(model):
+                # Convert images to latent space
+                batch["pixel_values"] =batch["pixel_values"].to(accelerator.device).to(weight_dtype)
+                batch["input_ids"] =batch["input_ids"].to(accelerator.device).to(weight_dtype).long()
+                
+                
+                
+                # Predict the noise residual and compute loss
+                target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
+
+                loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
+ 
+
+                # Gather the losses across all processes for logging (if we use distributed training).
+                avg_loss = accelerator.gather(loss.repeat(config.train_batch_size)).mean()
+                test_loss += avg_loss.item() / config.gradient_accumulation_steps
+                break
+
+       
+
+         
         
         train_loss = round(train_loss/len(train_dataloader), 4)
+        test_loss = round(test_loss/len(test_dataloader), 4)
 
         accelerator.log({"train_loss": train_loss}, step=global_step)
         run.log(
             {
                 
                 'Train loss': train_loss, 
+                'Test loss': test_loss
             }
         )
         if min_loss == None or train_loss <= min_loss:

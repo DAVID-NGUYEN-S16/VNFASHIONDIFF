@@ -45,7 +45,7 @@ hub_token : null
 prediction_type : null
 hub_model_id : null
 logging_dir : "logs"
-mixed_precision : 'no'
+mixed_precision : 'fp16'
 report_to : "wandb"
 local_rank : -1
 checkpointing_steps : 500
