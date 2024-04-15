@@ -39,7 +39,6 @@ run = wandb.init(
 )
 
 def load_models(config):
-    print(config.pretrained_model_name_or_path)
     # Load scheduler, tokenizer and models.
     noise_scheduler = DDPMScheduler.from_pretrained(config.pretrained_model_name_or_path, subfolder="scheduler")
     tokenizer = CLIPTokenizer.from_pretrained(
