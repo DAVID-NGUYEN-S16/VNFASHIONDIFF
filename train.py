@@ -20,6 +20,8 @@ from tqdm.notebook import tqdm
 from utils import load_config, deepspeed_zero_init_disabled_context_manager
 from models.ldm import LatenFashionDIFF
 from dataset import DataFASSHIONDIFF
+import time
+
 if is_wandb_available():
     import wandb
 logger = get_logger(__name__, log_level="INFO")
@@ -268,7 +270,17 @@ def main():
     
     
     min_loss = None
+    start_time = time.time()
+
     for epoch in tqdm(range(first_epoch, config.num_train_epochs)):
+        end_time = time.time()
+        training_time = end_time - start_time
+        max_training_time = 11 * 3600  
+        if training_time > max_training_time:
+            print("Training time exceeded 11 hours. Stopping training...")
+                
+        
+        
         model.train()
         train_loss = 0.0
         for step, batch in tqdm(enumerate(train_dataloader), total = len(train_dataloader)):
@@ -300,10 +312,8 @@ def main():
             logs = {"step_loss": loss.detach().item(), "lr": lr_scheduler.get_last_lr()[0]}
             progress_bar.set_postfix(**logs)
 
-            if global_step >= config.max_train_steps:
-                break
+           
             global_step+=1
-            break
         
         model.eval()
         test_loss = 0.0
@@ -324,7 +334,6 @@ def main():
                 # Gather the losses across all processes for logging (if we use distributed training).
                 avg_loss = accelerator.gather(loss.repeat(config.train_batch_size)).mean()
                 test_loss += avg_loss.item() / config.gradient_accumulation_steps
-                break
 
        
 
