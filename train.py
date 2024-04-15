@@ -320,4 +320,4 @@ def main():
 
 
 if __name__ == "__main__":
-    accelerator = main()
+    main()

@@ -9,5 +9,7 @@ setup(
         'torch',
         'numpy',
         'tqdm',
+        'diffusers',
+        'omegaconf'
     ],
 )
