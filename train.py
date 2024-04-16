@@ -356,6 +356,11 @@ def main():
             min_loss = train_loss
         
         logger.info(f"Saved state to {save_path}")
+        print({
+                'epoch':epoch, 
+                'Train loss': train_loss, 
+                'Test loss': test_loss
+            })
 
         train_loss = 0.0
     accelerator.end_training()
