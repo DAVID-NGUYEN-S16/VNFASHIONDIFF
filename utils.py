@@ -1,8 +1,6 @@
 import yaml
 from accelerate.state import AcceleratorState
 import accelerate
-from diffusers.utils.import_utils import is_xformers_available
-from packaging import version
 
 from omegaconf import OmegaConf
 

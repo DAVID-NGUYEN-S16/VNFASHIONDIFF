@@ -257,16 +257,7 @@ def main():
     first_epoch = 0
 
     initial_global_step = 0
-    
-    progress_bar = tqdm(
-        range(0, config.max_train_steps),
-        initial=initial_global_step,
-        desc="Steps",
-        # Only show the progress bar once on each machine.
-        disable=not accelerator.is_local_main_process,
-    )
-    
-    
+  
     
     min_loss = None
     start_time = time.time()
@@ -309,7 +300,6 @@ def main():
                 optimizer.zero_grad()
 
             logs = {"step_loss": loss.detach().item(), "lr": lr_scheduler.get_last_lr()[0]}
-            progress_bar.set_postfix(**logs)
 
            
             global_step+=1
