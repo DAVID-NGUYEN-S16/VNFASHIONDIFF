@@ -9,14 +9,13 @@ import transformers
 from accelerate import Accelerator
 from accelerate.logging import get_logger
 from accelerate.utils import ProjectConfiguration, set_seed
-from tqdm.auto import tqdm
 from transformers import CLIPTextModel, CLIPTokenizer
 from transformers.utils import ContextManagers
 import diffusers
 from diffusers import AutoencoderKL, DDPMScheduler, UNet2DConditionModel
 from diffusers.optimization import get_scheduler
 from diffusers.utils import is_wandb_available
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 from utils import load_config, deepspeed_zero_init_disabled_context_manager
 from models.ldm import LatenFashionDIFF
 from dataset import DataFASSHIONDIFF
