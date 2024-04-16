@@ -298,7 +298,7 @@ def main():
                 optimizer.step()
                 lr_scheduler.step()
                 optimizer.zero_grad()
-
+                break
             logs = {"step_loss": loss.detach().item(), "lr": lr_scheduler.get_last_lr()[0]}
 
            
@@ -323,7 +323,7 @@ def main():
                 # Gather the losses across all processes for logging (if we use distributed training).
                 avg_loss = accelerator.gather(loss.repeat(config.train_batch_size)).mean()
                 test_loss += avg_loss.item() / config.gradient_accumulation_steps
-
+                break
        
 
          
