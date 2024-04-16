@@ -332,7 +332,7 @@ def main():
         test_loss = round(test_loss/len(test_dataloader), 4)
 
         accelerator.log({"train_loss": train_loss}, step=global_step)
-        run.log(
+        wandb.log(
             {
                 
                 'Train loss': train_loss, 
@@ -340,6 +340,7 @@ def main():
             }
         )
         if min_loss == None or train_loss <= min_loss:
+            print("Update model")
             save_path = os.path.join(config.output_dir, f"best")
             accelerator.save_state(save_path)
             min_loss = train_loss
