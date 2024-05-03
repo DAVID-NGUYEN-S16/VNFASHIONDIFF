@@ -11,7 +11,7 @@ import os
 logging.basicConfig(filename='process_data.log', filemode='w', level=logging.INFO, format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
 
-def process_data_glami(path):
+def process_data_glami(path, path_img_root):
     meta = pd.read_csv(path).reset_index()
     data = {"image": [], "text": []}
     cnt = 0
@@ -30,7 +30,7 @@ def process_data_glami(path):
         else: content = title + " " + description
 
         idx = len(data['image'])
-        path_img = f"./data/glami-1m_final/glami-1m/{name_image}"
+        path_img = f"{path_img_root}{path_img}"
         if check_path_image(path_img) == False:
             cnt +=1
             continue
@@ -41,7 +41,7 @@ def process_data_glami(path):
     logging.info(f"{cnt} error")
     logging.info(f"{len(data['text'])} sucess")
     return data
-def process_data_adidas(path):
+def process_data_adidas(path, path_img_root):
     meta = pd.read_csv(path).reset_index()
     data = {"image": [], "text": []}
     cnt = 0
@@ -64,7 +64,7 @@ def process_data_adidas(path):
         image_lists = ast.literal_eval(meta.images[i])
 
         for path_img in image_lists:
-            path_img = f"./data/adidas_final/adidas/{path_img}"
+            path_img = f"{path_img_root}{path_img}"
             if check_path_image(path_img) == False:
                 cnt +=1
                 continue
@@ -78,7 +78,7 @@ def process_data_adidas(path):
     
     return data
 
-def process_data_uniqlo(path):
+def process_data_uniqlo(path, path_img_root):
     meta = pd.read_csv(path).reset_index()
     data = {"image": [], "text": []}
     cnt = 0
@@ -98,7 +98,7 @@ def process_data_uniqlo(path):
         colors = ast.literal_eval(meta.color[i])
         if len(colors) != len(image_lists): continue
         for path_img, color in zip(image_lists, colors):
-            path_img = f"./data/uniqlo_final/uniqlo/{path_img}"
+            path_img = f"{path_img_root}{path_img}"
             if check_path_image(path_img) == False:
                 cnt +=1
                 continue
@@ -112,7 +112,7 @@ def process_data_uniqlo(path):
     logging.info(f"{len(data['text'])} sucess")
     
     return data 
-def process_data_icondenim(path):
+def process_data_icondenim(path, path_img_root):
     meta = pd.read_csv(path).reset_index()
     data = {"image": [], "text": []}
     cnt = 0
@@ -132,7 +132,7 @@ def process_data_icondenim(path):
         colors = ast.literal_eval(meta.color[i])
         if len(colors) != len(image_lists): continue
         for path_img, color in zip(image_lists, colors):
-            path_img = f"./data/icondenim_final/icondenim/{path_img}"
+            path_img = f"{path_img_root}{path_img}"
             if check_path_image(path_img) == False:
                 cnt +=1
                 continue
@@ -147,7 +147,7 @@ def process_data_icondenim(path):
     
     return data 
 
-def process_data_yame(path):
+def process_data_yame(path, path_img_root):
     meta = pd.read_csv(path).reset_index()
     data = {"image": [], "text": []}
     cnt = 0
@@ -166,7 +166,7 @@ def process_data_yame(path):
         image_lists = ast.literal_eval(meta.img_list[i])
         color = meta.color[i]
         for path_img in image_lists:
-            path_img = f"./data/yame_final/yame/{path_img}"
+            path_img = f"{path_img_root}{path_img}"
             if check_path_image(path_img) == False:
                 cnt +=1
                 continue
@@ -184,22 +184,26 @@ def process_data_yame(path):
 
 def proces_data(list_path_datasets, file_name = "data"):
     data = {"image": [], "text": []}
+    
     for (path_dataset, name_dataset) in tqdm(list_path_datasets):
-        if name_dataset in "glami-1m_final":
-            sub_meta = process_data_glami(f"{path_dataset}/{name_dataset}/{name_dataset}.csv")
+        name = name_dataset.split('_')[0]
+        path_img = f"{path_dataset}/{name_dataset}/{name}/"
+        if name_dataset in "GLAMI-1M":
+            path_img = f"{path_dataset}/{name_dataset}/images/"
+            sub_meta = process_data_glami(f"{path_dataset}/{name_dataset}/{name_dataset}.csv", path_img)
         if name_dataset in "adidas_final":
-            sub_meta = process_data_adidas(f"{path_dataset}/{name_dataset}/{name_dataset}.csv")
+            sub_meta = process_data_adidas(f"{path_dataset}/{name_dataset}/{name_dataset}.csv", path_img)
         
         if name_dataset in "uniqlo_final":
-            sub_meta = process_data_uniqlo(f"{path_dataset}/{name_dataset}/{name_dataset}.csv")
+            sub_meta = process_data_uniqlo(f"{path_dataset}/{name_dataset}/{name_dataset}.csv", path_img)
         if name_dataset in "yame_final":
-            sub_meta = process_data_yame(f"{path_dataset}/{name_dataset}/{name_dataset}.csv")
+            sub_meta = process_data_yame(f"{path_dataset}/{name_dataset}/{name_dataset}.csv", path_img)
         if name_dataset in "icondenim_final":
-            sub_meta = process_data_icondenim(f"{path_dataset}/{name_dataset}/{name_dataset}.csv")
+            sub_meta = process_data_icondenim(f"{path_dataset}/{name_dataset}/{name_dataset}.csv", path_img)
         
         data.update(sub_meta)
         write_json(file_name, data)
-    logging.info(f"Dataset: FINAL \n  Have {len(data[text])} samples")
+    logging.info(f"Dataset: FINAL \n  Have {len(data['text'])} samples")
 
         
 
@@ -207,23 +211,20 @@ def proces_data(list_path_datasets, file_name = "data"):
                 
     return data
 data_train = proces_data([
-    ("./data/", "glami-1m_final"), 
-    ("./data/", "adidas_final"),
-    ("./data/", "uniqlo_final"),
-    ("./data/", "icondenim_final"),
-    ("./data/", "yame_final"),
-    # ("./data/", "uniqlo_final")
-#     ("/kaggle/input/cv-ck-dataset-crawl/icondenim_final", "icondenim_final"), 
-    # ("/kaggle/input/cv-ck-dataset-crawl/uniqlo_final", "uniqlo_final"), 
-#     ("/kaggle/input/cv-ck-dataset-crawl/yame_final", "yame_final"), 
-], file_name="./data/data_train.json")
+    ("/kaggle/input/cv-ck-dataset/", "GLAMI-1M"), 
+    ("/kaggle/input/cv-ck-crawl/", "adidas_final"),
+    ("/kaggle/input/cv-ck-crawl/", "uniqlo_final"),
+    ("/kaggle/input/cv-ck-crawl/", "icondenim_final"),
+    ("/kaggle/input/cv-ck-crawl/", "yame_final"),
+
+], file_name="data_train.json")
 data_test = proces_data([
     # ("./data/", "glami-1m_final"), 
     # ("./data/", "adidas_final"),
     # ("./data/", "uniqlo_final"),
     # ("./data/", "yame_final"),
-    ("./data/", "uniqlo_final")
+    ("/kaggle/input/cv-ck-crawl/", "uniqlo_final")
 #     ("/kaggle/input/cv-ck-dataset-crawl/icondenim_final", "icondenim_final"), 
     # ("/kaggle/input/cv-ck-dataset-crawl/uniqlo_final", "uniqlo_final"), 
 #     ("/kaggle/input/cv-ck-dataset-crawl/yame_final", "yame_final"), 
-], file_name="./data/data_test.json")
+], file_name="data_test.json")
