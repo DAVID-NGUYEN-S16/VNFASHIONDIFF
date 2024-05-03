@@ -1,4 +1,3 @@
-import yaml
 from accelerate.state import AcceleratorState
 import accelerate
 import json
@@ -49,10 +48,6 @@ def deepspeed_zero_init_disabled_context_manager():
             return []
 
         return [deepspeed_plugin.zero3_init_context_manager(enable=False)]
-    
-from googletrans import Translator
-
-translator = Translator()
 
 def translate(text):
     if isinstance(text, str) == False:
