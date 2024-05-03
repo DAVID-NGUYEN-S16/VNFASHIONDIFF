@@ -1,7 +1,7 @@
 wandb:
   key_wandb: ac12c873f730f05f115d320f73a1a908c5db8470
-  project: "Text-to-image"
-  tags: "LDM"
+  project: "Text-to-image-fashion"
+  tags: "LDM-Full-Data"
   name: "LDM-BASE"
 input_perturbation : 0
 pretrained_model_name_or_path :  "OFA-Sys/small-stable-diffusion-v0"

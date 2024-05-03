@@ -10,6 +10,7 @@ setup(
         'numpy',
         'tqdm',
         'diffusers',
-        'omegaconf'
+        'omegaconf',
+        'bitsandbytes'
     ],
 )
