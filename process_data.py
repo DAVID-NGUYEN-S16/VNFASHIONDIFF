@@ -219,12 +219,7 @@ data_train = proces_data([
 
 ], file_name="data_train.json")
 data_test = proces_data([
-    # ("./data/", "glami-1m_final"), 
-    # ("./data/", "adidas_final"),
-    # ("./data/", "uniqlo_final"),
-    # ("./data/", "yame_final"),
+
     ("/kaggle/input/cv-ck-crawl/", "uniqlo_final")
-#     ("/kaggle/input/cv-ck-dataset-crawl/icondenim_final", "icondenim_final"), 
-    # ("/kaggle/input/cv-ck-dataset-crawl/uniqlo_final", "uniqlo_final"), 
-#     ("/kaggle/input/cv-ck-dataset-crawl/yame_final", "yame_final"), 
+
 ], file_name="data_test.json")
