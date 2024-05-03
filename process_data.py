@@ -189,8 +189,8 @@ def proces_data(list_path_datasets, file_name = "data"):
         name = name_dataset.split('_')[0]
         path_img = f"{path_dataset}/{name_dataset}/{name}/"
         if name_dataset in "GLAMI-1M":
-            path_img = f"{path_dataset}/{name_dataset}/images/"
-            sub_meta = process_data_glami(f"{path_dataset}/{name_dataset}/{name_dataset}.csv", path_img)
+            path_img = f"{path_dataset}/images/"
+            sub_meta = process_data_glami(f"{path_dataset}/{name_dataset}.csv", path_img)
         if name_dataset in "adidas_final":
             sub_meta = process_data_adidas(f"{path_dataset}/{name_dataset}/{name_dataset}.csv", path_img)
         
