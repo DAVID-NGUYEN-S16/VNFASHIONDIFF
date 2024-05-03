@@ -30,7 +30,7 @@ def process_data_glami(path, path_img_root):
         else: content = title + " " + description
 
         idx = len(data['image'])
-        path_img = f"{path_img_root}{path_img}"
+        path_img = f"{path_img_root}{name_image}"
         if check_path_image(path_img) == False:
             cnt +=1
             continue
