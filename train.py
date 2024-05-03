@@ -268,6 +268,7 @@ def main():
         max_training_time = 11 * 3600  
         if training_time > max_training_time:
             print("Training time exceeded 11 hours. Stopping training...")
+            break
                 
         
         
@@ -318,8 +319,7 @@ def main():
                 target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
 
                 loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
- 
-
+                
                 # Gather the losses across all processes for logging (if we use distributed training).
                 avg_loss = accelerator.gather(loss.repeat(config.train_batch_size)).mean()
                 test_loss += avg_loss.item() / config.gradient_accumulation_steps
