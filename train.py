@@ -39,10 +39,10 @@ def load_models(config):
     
     text_encoder = CLIPTextModel.from_pretrained(
         config.pretrained_model_name_or_path, subfolder="text_encoder", revision=config.revision, variant=config.variant
-    )
+    ).eval()
     vae = AutoencoderKL.from_pretrained(
         config.pretrained_model_name_or_path, subfolder="vae", revision=config.revision, variant=config.variant
-    )
+    ).eval()
 
     unet = UNet2DConditionModel.from_pretrained(
         config.pretrained_model_name_or_path, subfolder="unet", revision=config.non_ema_revision
@@ -54,6 +54,7 @@ def load_models(config):
         vae = vae, 
         unet = unet, 
         process_diffusion = noise_scheduler, 
+        tokenizer = tokenizer
     )
     return model, tokenizer
 
@@ -195,7 +196,7 @@ def main():
             batch["input_ids"] =batch["input_ids"].to(device).long()
             
                 
-            with autocast(device_type="cuda", dtype=torch.float16):
+            with autocast(device_type="cuda", dtype=weight_dtype):
                 # Predict the noise residual and compute loss
                 target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
 
@@ -225,7 +226,7 @@ def main():
             batch["pixel_values"] =batch["pixel_values"].to(device)
             batch["input_ids"] =batch["input_ids"].to(device).long()
             
-            with autocast(device_type="cuda", dtype=torch.float16):
+            with autocast(device_type="cuda", dtype=weight_dtype):
                 # Predict the noise residual and compute loss
                 target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
 
@@ -258,7 +259,8 @@ def main():
             min_loss = total_loss
             print("Save model")
             image_eval = []
-            images, caption = model.inference(tokenizer = tokenizer)
+            model.set_up()
+            images, caption = model.inference()
             for img, cap in zip(images, caption):
                 image = wandb.Image(img, caption=cap)
                 image_eval.append(image)
