@@ -173,7 +173,7 @@ def main():
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         lr_scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
         config.num_train_epochs += first_epoch
-        print(f"Load model: {config.path_checkpoints}")
+        print(f"Load model: {config.path_checkpoint}")
         
     for epoch in range(first_epoch, config.num_train_epochs):
         end_time = time.time()
