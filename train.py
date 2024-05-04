@@ -185,7 +185,7 @@ def main():
             batch["input_ids"] =batch["input_ids"].to(device).long()
             
                 
-            with autocast(device_type=device, dtype=torch.float16):
+            with autocast(device_type="cuda", dtype=torch.float16):
                 # Predict the noise residual and compute loss
                 target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
 
@@ -213,7 +213,7 @@ def main():
             batch["pixel_values"] =batch["pixel_values"].to(device)
             batch["input_ids"] =batch["input_ids"].to(device).long()
             
-            with autocast(device_type=device, dtype=torch.float16):
+            with autocast(device_type="cuda", dtype=torch.float16):
                 # Predict the noise residual and compute loss
                 target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
 
