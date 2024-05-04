@@ -165,8 +165,8 @@ def main():
     start_time = time.time()
     scaler = torch.cuda.amp.GradScaler()
 
-    if config.path_checkpoints:
-        checkpoint = torch.load(config.path_checkpoints)
+    if config.path_checkpoint:
+        checkpoint = torch.load(config.path_checkpoint)
 
         first_epoch = checkpoint['epoch']
         model.load_state_dict(checkpoint['model_state_dict'])
