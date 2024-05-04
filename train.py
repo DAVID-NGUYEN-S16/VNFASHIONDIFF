@@ -223,6 +223,7 @@ def main():
                 loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
             
             test_loss += loss.item() / config.gradient_accumulation_steps
+            break
     
         
         train_loss = round(train_loss/len(train_dataloader), 4)
