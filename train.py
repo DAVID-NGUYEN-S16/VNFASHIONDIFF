@@ -197,12 +197,13 @@ def main():
             # Backpropagate
             scaler.scale(loss).backward()
             
-            # Make sure that parameter had return origin value gradient before apply clip_grad_norm
-            scaler.unscale_(optimizer)
             
-            torch.nn.utils.clip_grad_norm_(model.parameters(), config.max_grad_norm)
             
             if (step + 1) % config.gradient_accumulation_steps == 0:
+                # Make sure that parameter had return origin value gradient before apply clip_grad_norm
+                scaler.unscale_(optimizer)
+                
+                torch.nn.utils.clip_grad_norm_(model.parameters(), config.max_grad_norm)
                 scaler.step(optimizer)
                 lr_scheduler.step()
                 scaler.update()
