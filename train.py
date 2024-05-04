@@ -158,7 +158,7 @@ def main():
     # Move text_encode and vae to gpu and cast to weight_dtype
     model.text_encoder.to(device)
     model.vae.to(device)
-
+    model.to(device)
     global_step = 0
     first_epoch = 0  
     
