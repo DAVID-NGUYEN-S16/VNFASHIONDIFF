@@ -1,5 +1,3 @@
-from accelerate.state import AcceleratorState
-import accelerate
 import json
 import re
 import os
@@ -26,7 +24,6 @@ def translate_en2vi(en_texts: str) -> str:
     vi_texts = tokenizer_en2vi.batch_decode(output_ids, skip_special_tokens=True)
     return vi_texts
 
-# The input may consist of multiple text sequences, with the number of text sequences in the input ranging from 1 up to 8, 16, 32, or even higher, depending on the GPU memory.
 
 def write_json(path, data):
     with open(path, 'w', encoding='utf-8') as file:
@@ -39,15 +36,6 @@ def load_config(file_path):
     config = OmegaConf.load(file_path)
     return config
 
-def deepspeed_zero_init_disabled_context_manager():
-        """
-        returns either a context list that includes one that will disable zero.Init or an empty context list
-        """
-        deepspeed_plugin = AcceleratorState().deepspeed_plugin if accelerate.state.is_initialized() else None
-        if deepspeed_plugin is None:
-            return []
-
-        return [deepspeed_plugin.zero3_init_context_manager(enable=False)]
 
 def translate(text):
     if isinstance(text, str) == False:

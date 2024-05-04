@@ -20,14 +20,14 @@ seed : 32
 resolution : 224
 center_crop : False
 random_flip : False
-train_batch_size : 8
+train_batch_size : 32
 num_train_epochs : 100
 max_train_steps : null
 gradient_accumulation_steps : 1
 gradient_checkpointing : False
 learning_rate : 1e-4
 scale_lr : False
-lr_scheduler : "constant"
+lr_scheduler : "cosine"
 lr_warmup_steps : 500
 snr_gamma : null
 use_8bit_adam : True
