@@ -201,8 +201,10 @@ def proces_data(list_path_datasets, file_name = "data"):
         if name_dataset in "icondenim_final":
             sub_meta = process_data_icondenim(f"{path_dataset}/{name_dataset}/{name_dataset}.csv", path_img)
         
-        data.update(sub_meta)
+        for key in data.keys():
+            data[key] += sub_meta[key]
         write_json(file_name, data)
+        write_json("name_dataset.json", sub_meta)
     logging.info(f"Dataset: FINAL \n  Have {len(data['text'])} samples")
 
         
