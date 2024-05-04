@@ -189,6 +189,7 @@ def main():
         model.train()
         train_loss = 0.0
         test_loss = 0.0
+        step_counts = 0
         for step, batch in enumerate(train_dataloader):
             optimizer.zero_grad()
             # Convert images to latent space
@@ -209,7 +210,8 @@ def main():
             
             
             
-            if (step + 1) % config.gradient_accumulation_steps == 0:
+            if (step + 1) % int(config.gradient_accumulation_steps) == 0:
+                step_counts +=1
                 # Make sure that parameter had return origin value gradient before apply clip_grad_norm
                 scaler.unscale_(optimizer)
                 
@@ -243,7 +245,8 @@ def main():
                 
                 'Train loss': train_loss, 
                 'Test loss': test_loss,
-                'lr': lr_scheduler.get_last_lr()[0]
+                'lr': lr_scheduler.get_last_lr()[0],
+                'step_counts': step_counts
             }
         )
         total_loss = train_loss*0.3 + test_loss*0.7
