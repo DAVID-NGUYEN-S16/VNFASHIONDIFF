@@ -156,8 +156,8 @@ def main():
     weight_dtype = torch.float32
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
     # Move text_encode and vae to gpu and cast to weight_dtype
-    model.text_encoder.to(device, dtype=weight_dtype)
-    model.vae.to(device, dtype=weight_dtype)
+    model.text_encoder.to(device)
+    model.vae.to(device)
 
     global_step = 0
     first_epoch = 0  
@@ -181,11 +181,11 @@ def main():
         for step, batch in tqdm(enumerate(train_dataloader), total = len(train_dataloader)):
             optimizer.zero_grad()
             # Convert images to latent space
-            batch["pixel_values"] =batch["pixel_values"].to(device).to(weight_dtype)
-            batch["input_ids"] =batch["input_ids"].to(device).to(weight_dtype).long()
+            batch["pixel_values"] =batch["pixel_values"].to(device)
+            batch["input_ids"] =batch["input_ids"].to(device).long()
             
                 
-            with autocast(device_type='cuda', dtype=torch.float16):
+            with autocast(device_type=device, dtype=torch.float16):
                 # Predict the noise residual and compute loss
                 target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
 
@@ -210,10 +210,10 @@ def main():
         
         for step, batch in tqdm(enumerate(test_dataloader), total = len(test_dataloader)):
             # Convert images to latent space
-            batch["pixel_values"] =batch["pixel_values"].to(device).to(weight_dtype)
-            batch["input_ids"] =batch["input_ids"].to(device).to(weight_dtype).long()
+            batch["pixel_values"] =batch["pixel_values"].to(device)
+            batch["input_ids"] =batch["input_ids"].to(device).long()
             
-            with autocast(device_type='cuda', dtype=torch.float16):
+            with autocast(device_type=device, dtype=torch.float16):
                 # Predict the noise residual and compute loss
                 target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
 
