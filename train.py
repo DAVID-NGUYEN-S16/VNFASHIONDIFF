@@ -190,20 +190,22 @@ def main():
                 # Predict the noise residual and compute loss
                 target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
 
-                loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
+                loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean") / config.gradient_accumulation_steps
 
-            train_loss += loss.item() / config.gradient_accumulation_steps
+            train_loss += loss.item() 
 
             # Backpropagate
             scaler.scale(loss).backward()
             
             # Make sure that parameter had return origin value gradient before apply clip_grad_norm
             scaler.unscale_(optimizer)
+            
             torch.nn.utils.clip_grad_norm_(model.parameters(), config.max_grad_norm)
             
-            scaler.step(optimizer)
-            lr_scheduler.step()
-            scaler.update()
+            if (step + 1) % config.gradient_accumulation_steps == 0:
+                scaler.step(optimizer)
+                lr_scheduler.step()
+                scaler.update()
             global_step+=1
             break
         
