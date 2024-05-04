@@ -6,7 +6,6 @@ from transformers import CLIPTextModel, CLIPTokenizer
 from diffusers import AutoencoderKL, DDPMScheduler, UNet2DConditionModel
 from diffusers.optimization import get_scheduler
 from diffusers.utils import is_wandb_available
-from tqdm import tqdm
 from utils import load_config
 from models.ldm import LatenFashionDIFF
 from dataset import DataFASSHIONDIFF
@@ -174,8 +173,9 @@ def main():
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         lr_scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
         config.num_train_epochs += first_epoch
+        print(f"Load model: {config.path_checkpoints}")
         
-    for epoch in tqdm(range(first_epoch, config.num_train_epochs)):
+    for epoch in range(first_epoch, config.num_train_epochs):
         end_time = time.time()
         training_time = end_time - start_time
         max_training_time = 10 * 3600  
@@ -188,7 +188,7 @@ def main():
         model.train()
         train_loss = 0.0
         test_loss = 0.0
-        for step, batch in tqdm(enumerate(train_dataloader), total = len(train_dataloader)):
+        for step, batch in enumerate(train_dataloader):
             optimizer.zero_grad()
             # Convert images to latent space
             batch["pixel_values"] =batch["pixel_values"].to(device)
@@ -221,7 +221,7 @@ def main():
         
         model.eval()
         
-        for step, batch in tqdm(enumerate(test_dataloader), total = len(test_dataloader)):
+        for step, batch in enumerate(test_dataloader):
             # Convert images to latent space
             batch["pixel_values"] =batch["pixel_values"].to(device)
             batch["input_ids"] =batch["input_ids"].to(device).long()
