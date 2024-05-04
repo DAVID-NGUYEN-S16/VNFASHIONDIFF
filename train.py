@@ -63,7 +63,7 @@ def collate_fn(examples):
         pixel_values = pixel_values.to(memory_format=torch.contiguous_format).float()
         input_ids = torch.stack([example["input_ids"] for example in examples])
         return {"pixel_values": pixel_values, "input_ids": input_ids}
-
+    
 def main():
 
 
@@ -166,6 +166,15 @@ def main():
     start_time = time.time()
     scaler = torch.cuda.amp.GradScaler()
 
+    if config.path_checkpoints:
+        checkpoint = torch.load(config.path_checkpoints)
+
+        first_epoch = checkpoint['epoch']
+        model.load_state_dict(checkpoint['model_state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        lr_scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
+        config.num_train_epochs += first_epoch
+        
     for epoch in tqdm(range(first_epoch, config.num_train_epochs)):
         end_time = time.time()
         training_time = end_time - start_time
@@ -250,7 +259,12 @@ def main():
                 }, save_path)
             min_loss = total_loss
             print("Save model")
-        
+            image_eval = []
+            images, caption = model.inference(tokenizer = tokenizer)
+            for img, cap in zip(images, caption):
+                image = wandb.Image(img, caption=cap)
+                image_eval.append(image)
+            wandb.log({"images": image_eval})
         
         print({
                 'epoch':epoch, 

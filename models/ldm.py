@@ -2,7 +2,8 @@
 import torch
 import torch.utils.checkpoint
 import torch.nn as nn
-
+from diffusers import StableDiffusionPipeline
+from utils import preprocess_text
 
 
 class DiffusionWrapper(nn.Module):
@@ -49,3 +50,23 @@ class LatenFashionDIFF(nn.Module):
         model_pred = self.model(x = noisy_latents, time_steps = timesteps, context = encoder_hidden_states)[0]
         
         return target, model_pred
+    def inference(self, tokenizer, text = None):
+        pipeline = StableDiffusionPipeline(
+            vae=self.vae,
+            text_encoder=self.text_encoder,
+            tokenizer=tokenizer,
+            unet=self.model.diffusion_model,
+            scheduler = self.process_diffusion,
+            safety_checker = None,
+            feature_extractor= None,
+            requires_safety_checker= True,
+        )
+        if text is None:
+            text = ["cái quần đùi màu đỏ", "áo khoác màu xanh", "Bộ quần áo màu nâu"]
+        if isinstance(text, str):
+            text =[text]
+        images = []
+        for t in text:
+            image = pipeline(t, num_inference_steps=10, height=224, width=224).images[0]
+            images.append(image)
+        return images, text

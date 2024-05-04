@@ -3,6 +3,7 @@ wandb:
   project: "Text-to-image-fashion"
   tags: "LDM-Full-Data"
   name: "LDM-BASE"
+path_checkpoint: null
 input_perturbation : 0
 pretrained_model_name_or_path :  "OFA-Sys/small-stable-diffusion-v0"
 revision : null
