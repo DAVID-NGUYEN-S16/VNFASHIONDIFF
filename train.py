@@ -178,6 +178,7 @@ def main():
         
         model.train()
         train_loss = 0.0
+        test_loss = 0.0
         for step, batch in tqdm(enumerate(train_dataloader), total = len(train_dataloader)):
             optimizer.zero_grad()
             # Convert images to latent space
