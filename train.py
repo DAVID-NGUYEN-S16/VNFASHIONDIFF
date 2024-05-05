@@ -41,45 +41,45 @@ run = wandb.init(
     name = config.wandb['name']
 )
 
-def load_models(config):
-    # Load scheduler, tokenizer and models.
-    noise_scheduler = DDPMScheduler.from_pretrained(config.pretrained_model_name_or_path, subfolder="scheduler")
-    tokenizer = CLIPTokenizer.from_pretrained(
-        config.pretrained_model_name_or_path, subfolder="tokenizer", revision=config.revision
-    )
 
+
+
+def main():
     
-    
-    with ContextManagers(deepspeed_zero_init_disabled_context_manager()):
-        text_encoder = CLIPTextModel.from_pretrained(
-            config.pretrained_model_name_or_path, subfolder="text_encoder", revision=config.revision, variant=config.variant
-        )
-        vae = AutoencoderKL.from_pretrained(
-            config.pretrained_model_name_or_path, subfolder="vae", revision=config.revision, variant=config.variant
+    def load_models(config):
+        # Load scheduler, tokenizer and models.
+        noise_scheduler = DDPMScheduler.from_pretrained(config.pretrained_model_name_or_path, subfolder="scheduler")
+        tokenizer = CLIPTokenizer.from_pretrained(
+            config.pretrained_model_name_or_path, subfolder="tokenizer", revision=config.revision
         )
 
-    unet = UNet2DConditionModel.from_pretrained(
-        config.pretrained_model_name_or_path, subfolder="unet", revision=config.non_ema_revision
-    )
-    #text_encoder, vae, unet, process_diffusion, scaling_factor
-    model = LatenFashionDIFF(
-        text_encoder = text_encoder,
-        vae = vae, 
-        unet = unet, 
-        process_diffusion = noise_scheduler, 
-        tokenizer = tokenizer
-    )
-    return model, tokenizer
+        
+        
+        with ContextManagers(deepspeed_zero_init_disabled_context_manager()):
+            text_encoder = CLIPTextModel.from_pretrained(
+                config.pretrained_model_name_or_path, subfolder="text_encoder", revision=config.revision, variant=config.variant
+            )
+            vae = AutoencoderKL.from_pretrained(
+                config.pretrained_model_name_or_path, subfolder="vae", revision=config.revision, variant=config.variant
+            )
 
-def collate_fn(examples):
+        unet = UNet2DConditionModel.from_pretrained(
+            config.pretrained_model_name_or_path, subfolder="unet", revision=config.non_ema_revision
+        )
+        #text_encoder, vae, unet, process_diffusion, scaling_factor
+        model = LatenFashionDIFF(
+            text_encoder = text_encoder,
+            vae = vae, 
+            unet = unet, 
+            process_diffusion = noise_scheduler, 
+            tokenizer = tokenizer
+        )
+        return model, tokenizer
+    def collate_fn(examples):
         pixel_values = torch.stack([example["pixel_values"] for example in examples])
         pixel_values = pixel_values.to(memory_format=torch.contiguous_format).float()
         input_ids = torch.stack([example["input_ids"] for example in examples])
         return {"pixel_values": pixel_values, "input_ids": input_ids}
-
-def main():
-    
-
     logging_dir = os.path.join(config.output_dir, config.logging_dir)
 
     accelerator_project_config = ProjectConfiguration(project_dir=config.output_dir, logging_dir=logging_dir)
