@@ -23,8 +23,7 @@ import time
 from accelerate import notebook_launcher
 import torch.multiprocessing as mp
 
-if is_wandb_available():
-    import wandb
+import wandb
 
 
 

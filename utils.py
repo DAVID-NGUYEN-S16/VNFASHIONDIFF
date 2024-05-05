@@ -25,23 +25,23 @@ def deepspeed_zero_init_disabled_context_manager():
 
         return [deepspeed_plugin.zero3_init_context_manager(enable=False)]
     
-tokenizer_en2vi = AutoTokenizer.from_pretrained("vinai/vinai-translate-en2vi-v2", src_lang="en_XX")
-model_en2vi = AutoModelForSeq2SeqLM.from_pretrained("vinai/vinai-translate-en2vi-v2")
-device_en2vi = torch.device("cuda")
-model_en2vi.to(device_en2vi)
+# tokenizer_en2vi = AutoTokenizer.from_pretrained("vinai/vinai-translate-en2vi-v2", src_lang="en_XX")
+# model_en2vi = AutoModelForSeq2SeqLM.from_pretrained("vinai/vinai-translate-en2vi-v2")
+# device_en2vi = torch.device("cuda")
+# model_en2vi.to(device_en2vi)
 
 
-def translate_en2vi(en_texts: str) -> str:
-    input_ids = tokenizer_en2vi(en_texts, padding=True, return_tensors="pt").to(device_en2vi)
-    output_ids = model_en2vi.generate(
-        **input_ids,
-        decoder_start_token_id=tokenizer_en2vi.lang_code_to_id["vi_VN"],
-        num_return_sequences=1,
-        num_beams=5,
-        early_stopping=True
-    )
-    vi_texts = tokenizer_en2vi.batch_decode(output_ids, skip_special_tokens=True)
-    return vi_texts
+# def translate_en2vi(en_texts: str) -> str:
+#     input_ids = tokenizer_en2vi(en_texts, padding=True, return_tensors="pt").to(device_en2vi)
+#     output_ids = model_en2vi.generate(
+#         **input_ids,
+#         decoder_start_token_id=tokenizer_en2vi.lang_code_to_id["vi_VN"],
+#         num_return_sequences=1,
+#         num_beams=5,
+#         early_stopping=True
+#     )
+#     vi_texts = tokenizer_en2vi.batch_decode(output_ids, skip_special_tokens=True)
+#     return vi_texts
 
 
 def write_json(path, data):
@@ -56,13 +56,13 @@ def load_config(file_path):
     return config
 
 
-def translate(text):
-    if isinstance(text, str) == False:
-        return text
-    try:
-        return translate_en2vi([text])[0]
-    except:
-        return text
+# def translate(text):
+#     if isinstance(text, str) == False:
+#         return text
+#     try:
+#         return translate_en2vi([text])[0]
+#     except:
+#         return text
 # print(translate( "quần easy short nhiều màu với màu sắc off white"))
 
 def preprocess_text(text: str) -> str:    
