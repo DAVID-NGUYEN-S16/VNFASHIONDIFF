@@ -317,7 +317,7 @@ def main():
 
            
             global_step+=1
-            if step == 10: break
+            # if step == 10: break
             
         
         model.eval()
@@ -341,7 +341,7 @@ def main():
                     avg_loss = accelerator.gather(loss.repeat(config.train_batch_size)).mean()
                     test_loss += avg_loss.item() / config.gradient_accumulation_steps
 
-                if step == 10: break
+                # if step == 10: break
 
          
         
