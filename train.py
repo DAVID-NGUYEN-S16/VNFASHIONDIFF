@@ -21,7 +21,7 @@ from models.ldm import LatenFashionDIFF
 from dataset import DataFASSHIONDIFF
 import time
 from accelerate import notebook_launcher
-
+import torch.multiprocessing as mp
 
 if is_wandb_available():
     import wandb
@@ -377,5 +377,6 @@ def main():
 
 
 if __name__ == "__main__":
+    mp.set_start_method('spawn')
     notebook_launcher(main, args=(), num_processes=2)
 
