@@ -25,27 +25,28 @@ import torch.multiprocessing as mp
 
 if is_wandb_available():
     import wandb
-logger = get_logger(__name__, log_level="INFO")
-
-## config global
-path_config  = "./config.yaml"
-config = load_config(path_config)
-
-wandb.login(key=config.wandb['key_wandb'])
-
-run = wandb.init(
-    # Set the project where this run will be logged
-    project=config.wandb['project'],
-
-    tags = config.wandb['tags'], 
-    name = config.wandb['name']
-)
 
 
 
 
 def main():
-    
+    logger = get_logger(__name__, log_level="INFO")
+
+    ## config global
+    path_config  = "./config.yaml"
+    config = load_config(path_config)
+
+    wandb.login(key=config.wandb['key_wandb'])
+
+    run = wandb.init(
+        # Set the project where this run will be logged
+        project=config.wandb['project'],
+
+        tags = config.wandb['tags'], 
+        name = config.wandb['name']
+    )
+
+
     def load_models(config):
         # Load scheduler, tokenizer and models.
         noise_scheduler = DDPMScheduler.from_pretrained(config.pretrained_model_name_or_path, subfolder="scheduler")
