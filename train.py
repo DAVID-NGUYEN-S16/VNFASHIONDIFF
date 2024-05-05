@@ -274,7 +274,7 @@ def main():
     min_loss = None
     start_time = time.time()
 
-    for epoch in tqdm(range(first_epoch, config.num_train_epochs)):
+    for epoch in range(first_epoch, config.num_train_epochs):
         end_time = time.time()
         training_time = end_time - start_time
         max_training_time = 11 * 3600  
@@ -285,7 +285,7 @@ def main():
         
         model.train()
         train_loss = 0.0
-        for step, batch in tqdm(enumerate(train_dataloader), total = len(train_dataloader)):
+        for step, batch in enumerate(train_dataloader):
             with accelerator.accumulate(model):
                 # Convert images to latent space
                 batch["pixel_values"] =batch["pixel_values"].to(accelerator.device).to(weight_dtype)
@@ -319,7 +319,7 @@ def main():
         
         model.eval()
         test_loss = 0.0
-        for step, batch in tqdm(enumerate(test_dataloader), total = len(test_dataloader)):
+        for step, batch in enumerate(test_dataloader):
             with accelerator.accumulate(model):
                 # Convert images to latent space
                 batch["pixel_values"] =batch["pixel_values"].to(accelerator.device).to(weight_dtype)
