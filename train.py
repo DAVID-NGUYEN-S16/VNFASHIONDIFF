@@ -317,7 +317,7 @@ def main():
 
            
             global_step+=1
-            break
+            
         
         model.eval()
         test_loss = 0.0
@@ -339,7 +339,7 @@ def main():
                 avg_loss = accelerator.gather(loss.repeat(config.train_batch_size)).mean()
                 test_loss += avg_loss.item() / config.gradient_accumulation_steps
 
-                break
+                
 
          
         
