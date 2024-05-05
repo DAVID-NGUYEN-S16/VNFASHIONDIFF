@@ -377,6 +377,7 @@ def main():
 
 
 if __name__ == "__main__":
-    mp.set_start_method('spawn')
-    notebook_launcher(main, args=(), num_processes=2)
+    main()
+    # mp.set_start_method('spawn')
+    # notebook_launcher(main, args=(), num_processes=2)
 
