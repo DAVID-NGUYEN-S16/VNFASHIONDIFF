@@ -20,6 +20,8 @@ from utils import load_config, deepspeed_zero_init_disabled_context_manager
 from models.ldm import LatenFashionDIFF
 from dataset import DataFASSHIONDIFF
 import time
+from accelerate import notebook_launcher
+
 
 if is_wandb_available():
     import wandb
@@ -375,4 +377,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    notebook_launcher(main, args=(), num_processes=2)
+
