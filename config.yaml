@@ -17,7 +17,7 @@ max_train_samples : null
 validation_prompts : null
 output_dir : "sd-model-finetuned"
 cache_dir : null
-seed : 32
+seed : 40
 resolution : 124
 center_crop : False
 random_flip : False
