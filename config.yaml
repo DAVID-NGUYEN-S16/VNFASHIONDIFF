@@ -21,10 +21,10 @@ seed : 32
 resolution : 124
 center_crop : False
 random_flip : False
-train_batch_size : 64
+train_batch_size : 40
 num_train_epochs : 100
 max_train_steps : null
-gradient_accumulation_steps : 1
+gradient_accumulation_steps : 2
 gradient_checkpointing : False
 learning_rate : 1e-4
 scale_lr : False
