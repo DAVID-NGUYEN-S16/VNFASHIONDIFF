@@ -227,9 +227,10 @@ def main():
         config.mixed_precision = accelerator.mixed_precision
 
     # Move text_encode and vae to gpu and cast to weight_dtype
-    model.text_encoder.to(accelerator.device, dtype=weight_dtype)
-    model.vae.to(accelerator.device, dtype=weight_dtype)
-
+    # model.module.text_encoder.to(accelerator.device, dtype=weight_dtype)
+    # model.module.vae.to(accelerator.device, dtype=weight_dtype)
+    accelerator.unwrap_model(model).text_encoder.to(accelerator.device, dtype=weight_dtype)
+    accelerator.unwrap_model(model).vae.to(accelerator.device, dtype=weight_dtype)
     # We need to recalculate our total training steps as the size of the training dataloader may have changed.
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / config.gradient_accumulation_steps)
     
@@ -358,8 +359,8 @@ def main():
             min_loss = train_loss
             print("Save model")
             image_eval = []
-            model.set_up()
-            images, caption = model.inference()
+            accelerator.unwrap_model(model).set_up()
+            images, caption = accelerator.unwrap_model(model).inference()
             for img, cap in zip(images, caption):
                 image = wandb.Image(img, caption=cap)
                 image_eval.append(image)
