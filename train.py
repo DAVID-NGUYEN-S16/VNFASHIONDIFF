@@ -322,25 +322,26 @@ def main():
         
         model.eval()
         test_loss = 0.0
-        for step, batch in enumerate(test_dataloader):
-            with accelerator.accumulate(model):
-                # Convert images to latent space
-                batch["pixel_values"] =batch["pixel_values"].to(accelerator.device).to(weight_dtype)
-                batch["input_ids"] =batch["input_ids"].to(accelerator.device).to(weight_dtype).long()
-                
-                
-                
-                # Predict the noise residual and compute loss
-                target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
+        with torch.no_grad():
+            for step, batch in enumerate(test_dataloader):
+                with accelerator.accumulate(model):
+                    # Convert images to latent space
+                    batch["pixel_values"] =batch["pixel_values"].to(accelerator.device).to(weight_dtype)
+                    batch["input_ids"] =batch["input_ids"].to(accelerator.device).to(weight_dtype).long()
+                    
+                    
+                    
+                    # Predict the noise residual and compute loss
+                    target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
 
-                loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
- 
+                    loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
+    
 
-                # Gather the losses across all processes for logging (if we use distributed training).
-                avg_loss = accelerator.gather(loss.repeat(config.train_batch_size)).mean()
-                test_loss += avg_loss.item() / config.gradient_accumulation_steps
+                    # Gather the losses across all processes for logging (if we use distributed training).
+                    avg_loss = accelerator.gather(loss.repeat(config.train_batch_size)).mean()
+                    test_loss += avg_loss.item() / config.gradient_accumulation_steps
 
-            if step == 10: break
+                if step == 10: break
 
          
         
