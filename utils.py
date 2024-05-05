@@ -5,7 +5,26 @@ from PIL import Image
 from omegaconf import OmegaConf
 import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+import yaml
+from accelerate.state import AcceleratorState
+import accelerate
+from diffusers.utils.import_utils import is_xformers_available
+from packaging import version
 
+from omegaconf import OmegaConf
+
+
+
+def deepspeed_zero_init_disabled_context_manager():
+        """
+        returns either a context list that includes one that will disable zero.Init or an empty context list
+        """
+        deepspeed_plugin = AcceleratorState().deepspeed_plugin if accelerate.state.is_initialized() else None
+        if deepspeed_plugin is None:
+            return []
+
+        return [deepspeed_plugin.zero3_init_context_manager(enable=False)]
+    
 tokenizer_en2vi = AutoTokenizer.from_pretrained("vinai/vinai-translate-en2vi-v2", src_lang="en_XX")
 model_en2vi = AutoModelForSeq2SeqLM.from_pretrained("vinai/vinai-translate-en2vi-v2")
 device_en2vi = torch.device("cuda")
