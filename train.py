@@ -37,13 +37,12 @@ def main():
 
     wandb.login(key=config.wandb['key_wandb'])
 
-    run = wandb.init(
-        # Set the project where this run will be logged
-        project=config.wandb['project'],
+    # run = wandb.init(
+    #     # Set the project where this run will be logged
+    #     project=config.wandb['project'],
 
-        tags = config.wandb['tags'], 
-        name = config.wandb['name']
-    )
+        
+    # )
 
 
     def load_models(config):
@@ -85,11 +84,19 @@ def main():
     accelerator_project_config = ProjectConfiguration(project_dir=config.output_dir, logging_dir=logging_dir)
 
     accelerator = Accelerator(
+        log_with="wandb",
         gradient_accumulation_steps=config.gradient_accumulation_steps,
         mixed_precision=config.mixed_precision,
         log_with=config.report_to,
         project_config=accelerator_project_config,
     )
+    
+    accelerator.init_trackers(
+        project_name = config.wandb['project'],
+        init_kwargs={"wandb": {"entity": "my-wandb-team", 'tags': config.wandb['tags'], 'name': config.wandb['name']}}
+        
+    )
+
 #     return accelerator
 
     # Disable AMP for MPS.
@@ -317,7 +324,7 @@ def main():
 
            
             global_step+=1
-            # if step == 10: break
+            if step == 1: break
             
         
         model.eval()
@@ -341,20 +348,21 @@ def main():
                     avg_loss = accelerator.gather(loss.repeat(config.train_batch_size)).mean()
                     test_loss += avg_loss.item() / config.gradient_accumulation_steps
 
-                # if step == 10: break
+                if step == 1: break
 
          
         
         train_loss = round(train_loss/len(train_dataloader), 4)
         test_loss = round(test_loss/len(test_dataloader), 4)
 
-        accelerator.log({"train_loss": train_loss}, step=global_step)
-        wandb.log(
+        # accelerator.log({"train_loss": train_loss}, step=global_step)
+        accelerator.log(
             {
                 
                 'Train loss': train_loss, 
                 'Test loss': test_loss
-            }
+            },
+            step=global_step
         )
         if min_loss == None or train_loss <= min_loss:
             save_path = os.path.join(config.output_dir, f"best")
@@ -367,7 +375,7 @@ def main():
             for img, cap in zip(images, caption):
                 image = wandb.Image(img, caption=cap)
                 image_eval.append(image)
-            wandb.log({"images": image_eval})
+            accelerator.log({"images": image_eval})
         
         logger.info(f"Saved state to {save_path}")
         print({
