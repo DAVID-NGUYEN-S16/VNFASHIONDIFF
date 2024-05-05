@@ -13,7 +13,7 @@ import time
 from torch import autocast 
 if is_wandb_available():
     import wandb
-
+import math
 ## config global
 path_config  = "./config.yaml"
 config = load_config(path_config)
@@ -145,16 +145,10 @@ def main():
             batch_size=config.train_batch_size,
     )
     
-    lr_scheduler = get_scheduler(
-        config.lr_scheduler,
-        optimizer=optimizer,
-        num_warmup_steps=config.lr_warmup_steps,
-        num_training_steps=config.max_train_steps ,
-    )
+    lr_scheduler  = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda = lambda x: 1/math.sqrt(x + 0.001)) 
 
-
-    weight_dtype = torch.float32
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    
     # Move text_encode and vae to gpu and cast to weight_dtype
     model.text_encoder.to(device)
     model.vae.to(device)
@@ -164,7 +158,6 @@ def main():
     
     min_loss = None
     start_time = time.time()
-    scaler = torch.cuda.amp.GradScaler()
 
     if config.path_checkpoint:
         checkpoint = torch.load(config.path_checkpoint)
@@ -195,31 +188,25 @@ def main():
             # Convert images to latent space
             batch["pixel_values"] =batch["pixel_values"].to(device)
             batch["input_ids"] =batch["input_ids"].to(device).long()
-            
-                
-            with autocast(device_type="cuda", dtype=weight_dtype):
-                # Predict the noise residual and compute loss
-                target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
 
-                loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean") / config.gradient_accumulation_steps
+            target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
+
+            loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean") / config.gradient_accumulation_steps
 
             train_loss += loss.item() 
 
             # Backpropagate
-            scaler.scale(loss).backward()
+            loss.backward()
             
             
             
             if (step + 1) % int(config.gradient_accumulation_steps) == 0:
-                step_counts +=1
-                # Make sure that parameter had return origin value gradient before apply clip_grad_norm
-                scaler.unscale_(optimizer)
-                
+                step_counts +=1                
                 torch.nn.utils.clip_grad_norm_(model.parameters(), config.max_grad_norm)
-                scaler.step(optimizer)
-                lr_scheduler.step()
-                scaler.update()
+                optimizer.step()
+                
             global_step+=1
+        lr_scheduler.step()
         
         model.eval()
         
@@ -228,11 +215,10 @@ def main():
             batch["pixel_values"] =batch["pixel_values"].to(device)
             batch["input_ids"] =batch["input_ids"].to(device).long()
             
-            with autocast(device_type="cuda", dtype=weight_dtype):
-                # Predict the noise residual and compute loss
-                target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
+            # Predict the noise residual and compute loss
+            target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
 
-                loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
+            loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
             
             test_loss += loss.item() / config.gradient_accumulation_steps
     
