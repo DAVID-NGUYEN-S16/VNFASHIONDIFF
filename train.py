@@ -312,11 +312,12 @@ def main():
                 lr_scheduler.step()
                 optimizer.zero_grad()
 
-            logs = {"step_loss": loss.detach().item(), "lr": lr_scheduler.get_last_lr()[0]}
+            logs = {"step": f",{step}/{len(train_dataloader)}", "step_loss": loss.detach().item(), "lr": lr_scheduler.get_last_lr()[0]}
             progress_bar.set_postfix(**logs)
 
            
             global_step+=1
+            break
         
         model.eval()
         test_loss = 0.0
@@ -338,7 +339,7 @@ def main():
                 avg_loss = accelerator.gather(loss.repeat(config.train_batch_size)).mean()
                 test_loss += avg_loss.item() / config.gradient_accumulation_steps
 
-       
+                break
 
          
         
