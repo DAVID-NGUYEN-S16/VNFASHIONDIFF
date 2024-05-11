@@ -84,10 +84,10 @@ def main():
     accelerator_project_config = ProjectConfiguration(project_dir=config.output_dir, logging_dir=logging_dir)
 
     accelerator = Accelerator(
-        log_with="wandb",
+        log_with=config.report_to,
         gradient_accumulation_steps=config.gradient_accumulation_steps,
         mixed_precision=config.mixed_precision,
-        log_with=config.report_to,
+        
         project_config=accelerator_project_config,
     )
     
