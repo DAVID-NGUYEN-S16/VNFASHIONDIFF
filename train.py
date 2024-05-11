@@ -224,6 +224,7 @@ def main():
     )
     
     if config.path_fineturn_model:
+        print(f"Update weight {config.path_fineturn_model}")
         accelerator.load_state(config.path_fineturn_model)
         
 
