@@ -6,6 +6,7 @@ wandb:
 path_checkpoint: null
 input_perturbation : 0
 pretrained_model_name_or_path :  "OFA-Sys/small-stable-diffusion-v0"
+path_fineturn_model : /kaggle/input/vnfashiondiff
 revision : null
 variant : null
 dataset_name : null
