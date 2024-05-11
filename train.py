@@ -93,7 +93,7 @@ def main():
     
     accelerator.init_trackers(
         project_name = config.wandb['project'],
-        init_kwargs={"wandb": {"entity": "VNFashionDiFF", 'tags': config.wandb['tags'], 'name': config.wandb['name']}}
+        init_kwargs={"wandb": {"entity": "davidnguyen", 'tags': config.wandb['tags'], 'name': config.wandb['name']}}
         
     )
 
