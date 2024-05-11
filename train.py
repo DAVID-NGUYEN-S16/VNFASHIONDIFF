@@ -329,9 +329,9 @@ def main():
 
            
             global_step+=1
-            # if step == 1: break
+            if step == 1: break
             
-        
+        start_time = time.time()
         model.eval()
         test_loss = 0.0
         with torch.no_grad():
@@ -355,8 +355,8 @@ def main():
 
                 # if step == 1: break
 
-         
-        
+        print('Time inference test') 
+        print(time.time() - start_time)
         train_loss = round(train_loss/len(train_dataloader), 4)
         test_loss = round(test_loss/len(test_dataloader), 4)
 
