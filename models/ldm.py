@@ -71,6 +71,6 @@ class LatenFashionDIFF(nn.Module):
             text =[text]
         images = []
         for t in text:
-            image = self.pipeline(t, num_inference_steps=10, height=224, width=224).images[0]
+            image = self.pipeline(t, num_inference_steps=20, height=128, width=128).images[0]
             images.append(image)
         return images, text

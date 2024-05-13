@@ -329,7 +329,7 @@ def main():
 
            
             global_step+=1
-            # if step == 1: break
+            if step == 1: break
             
         # start_time = time.time()
         # model.eval()
