@@ -357,6 +357,8 @@ def main():
 
         # print('Time inference test') 
         # print(time.time() - start_time)
+        accelerator.wait_for_everyone() 
+        
         train_loss = round(train_loss/len(train_dataloader), 4)
         # test_loss = round(test_loss/len(test_dataloader), 4)
 
@@ -382,7 +384,7 @@ def main():
                 image_eval.append(image)
             accelerator.log({"images": image_eval})
         
-        logger.info(f"Saved state to {save_path}")
+            logger.info(f"Saved state to {save_path}")
         print({
                 'epoch':epoch, 
                 'Train loss': train_loss, 
