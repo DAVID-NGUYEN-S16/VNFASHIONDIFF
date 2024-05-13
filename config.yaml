@@ -19,7 +19,7 @@ validation_prompts : null
 output_dir : "sd-model-finetuned"
 cache_dir : null
 seed : 40
-resolution : 124
+resolution : 128
 center_crop : False
 random_flip : False
 train_batch_size : 64
@@ -60,5 +60,5 @@ tracker_project_name : "text2image-fine-tune"
 data:
   train:  /kaggle/input/data-train/data_train.json
   eval: /kaggle/input/data-train/data_test.json
-  size: 124
+  size: 128
 
