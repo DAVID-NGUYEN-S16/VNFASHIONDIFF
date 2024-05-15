@@ -3,10 +3,10 @@ wandb:
   project: "Text-to-image-fashion"
   tags: "LDM-Full-Data"
   name: "LDM-BASE"
-path_checkpoint: null
+path_checkpoint: "/kaggle/input/vnfashiondiff-misjony/"
 input_perturbation : 0
 pretrained_model_name_or_path :  "prompthero/openjourney"
-path_fineturn_model : null
+path_fineturn_model : "/kaggle/input/vnfashiondiff-misjony/"
 revision : null
 variant : null
 dataset_name : null
