@@ -130,10 +130,7 @@ def main():
 
 
     model, tokenizer = load_models(config)
-
-
-    model.train()
-
+    model.to("cuda")
 
     # descrease memmory of GPU and speech up process trainning by cut a part  intermediate  value of progress backpropagate 
     if config.gradient_checkpointing:
@@ -186,21 +183,21 @@ def main():
             batch_size=config.train_batch_size,
         )
     
-    test_dataset = DataFASSHIONDIFF(
-        path_meta = config.data['train'],
-        size= config.data['size'],
-        interpolation="bicubic",
-        flip_p=0.5, 
-        tokenizer = tokenizer,
-        train = False
-    )
+    # test_dataset = DataFASSHIONDIFF(
+    #     path_meta = config.data['train'],
+    #     size= config.data['size'],
+    #     interpolation="bicubic",
+    #     flip_p=0.5, 
+    #     tokenizer = tokenizer,
+    #     train = False
+    # )
     
-    test_dataloader = torch.utils.data.DataLoader(
-            test_dataset,
-            shuffle=True,
-            collate_fn=collate_fn,
-            batch_size=config.train_batch_size,
-    )
+    # test_dataloader = torch.utils.data.DataLoader(
+    #         test_dataset,
+    #         shuffle=True,
+    #         collate_fn=collate_fn,
+    #         batch_size=config.train_batch_size,
+    # )
     
 
     # Scheduler and math around the number of training steps.

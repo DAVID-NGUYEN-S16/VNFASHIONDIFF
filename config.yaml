@@ -6,7 +6,7 @@ wandb:
 path_checkpoint: "/kaggle/input/vnfashiondiff-misjony/"
 input_perturbation : 0
 pretrained_model_name_or_path :  "prompthero/openjourney"
-path_fineturn_model : "/kaggle/input/vnfashiondiff-misjony/"
+# path_fineturn_model : "/kaggle/input/vnfashiondiff-misjony/"
 revision : null
 variant : null
 dataset_name : null
