@@ -22,7 +22,7 @@ from dataset import DataFASSHIONDIFF
 import time
 from accelerate import notebook_launcher
 import torch.multiprocessing as mp
-
+import gc
 import wandb
 
 
@@ -130,7 +130,7 @@ def main():
 
 
     model, tokenizer = load_models(config)
-    model.to("cuda")
+    
 
     # descrease memmory of GPU and speech up process trainning by cut a part  intermediate  value of progress backpropagate 
     if config.gradient_checkpointing:
@@ -223,7 +223,10 @@ def main():
     if config.path_fineturn_model:
         print(f"Update weight {config.path_fineturn_model}")
         accelerator.load_state(config.path_fineturn_model)
-        
+
+        # Clean memory
+        torch.cuda.empty_cache()
+        gc.collect()
 
     # For mixed precision training we cast all non-trainable weights (vae, non-lora text_encoder and non-lora unet) to half-precision
     # as these weights are only used for inference, keeping weights in full precision is not required.
@@ -240,6 +243,7 @@ def main():
     # model.module.vae.to(accelerator.device, dtype=weight_dtype)
     accelerator.unwrap_model(model).text_encoder.to(accelerator.device, dtype=weight_dtype)
     accelerator.unwrap_model(model).vae.to(accelerator.device, dtype=weight_dtype)
+    model.to("cuda")
     # We need to recalculate our total training steps as the size of the training dataloader may have changed.
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / config.gradient_accumulation_steps)
     
