@@ -3,7 +3,7 @@ wandb:
   project: "Text-to-image-fashion"
   tags: "LDM-Full-Data"
   name: "LDM-BASE"
-path_checkpoint: "/kaggle/input/vnfashiondiff-misjony/"
+path_checkpoint: null
 input_perturbation : 0
 pretrained_model_name_or_path :  "prompthero/openjourney"
 path_fineturn_model : null
@@ -32,7 +32,7 @@ scale_lr : False
 lr_scheduler : "constant"
 lr_warmup_steps : 500
 snr_gamma : null
-use_8bit_adam : null
+use_8bit_adam : True
 allow_tf32 : False
 use_ema : False
 non_ema_revision : null
