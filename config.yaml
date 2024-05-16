@@ -32,7 +32,7 @@ scale_lr : False
 lr_scheduler : "constant"
 lr_warmup_steps : 500
 snr_gamma : null
-use_8bit_adam : True
+use_8bit_adam : False
 allow_tf32 : False
 use_ema : False
 non_ema_revision : null
