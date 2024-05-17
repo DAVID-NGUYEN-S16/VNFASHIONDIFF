@@ -7,13 +7,13 @@ class VNCLIP_model(nn.Module):
         self.model = pt_multilingual_clip.MultilingualCLIP.from_pretrained(name_model)
         self.text_encoder = self.model.transformer
         self.linear_proj = self.model.LinearTransformation
-    def forward(self, inputs):
+    def forward(self, input_ids, attention_mask):
         '''
         Return last_hidden_state from input
         Parameters:
         
             inputs: (B, S, D)
         '''
-        inp = self.text_encoder(inputs).last_hidden_state
+        inp = self.text_encoder(input_ids,attention_mask = attention_mask ).last_hidden_state
         inp = self.linear_proj(inp)
         return inp

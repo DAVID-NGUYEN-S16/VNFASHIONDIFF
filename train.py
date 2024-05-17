@@ -320,10 +320,10 @@ def main():
                 batch["pixel_values"] =batch["pixel_values"].to(accelerator.device).to(weight_dtype)
                 batch["input_ids"] =batch["input_ids"].to(accelerator.device).to(weight_dtype).long()
                 
-                
+                batch["attention_mask"] =batch["attention_mask"].to(accelerator.device).to(weight_dtype).long()
                 
                 # Predict the noise residual and compute loss
-                target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
+                target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"], attention_mask = batch['attention_mask'])
 
                 loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
  
@@ -412,8 +412,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
     # mp.set_start_method('spawn')
     print(torch.cuda.is_initialized())
-    # notebook_launcher(main, args=(), num_processes=2)
+    notebook_launcher(main, args=(), num_processes=2)
 

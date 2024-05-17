@@ -24,7 +24,7 @@ class LatenFashionDIFF(nn.Module):
         self.scaling_factor = vae.config.scaling_factor
         self.tokenizer = tokenizer
         self.set_up()
-    def forward(self, pixel_values, input_ids):
+    def forward(self, pixel_values, input_ids, attention_mask):
         latents = self.vae.encode(pixel_values).latent_dist.sample()
         latents = latents * self.scaling_factor
         # create distribution of latens        
@@ -41,7 +41,7 @@ class LatenFashionDIFF(nn.Module):
         
         # print(input_ids.size())
         # Get the text embedding for conditioning
-        encoder_hidden_states = self.text_encoder(input_ids.squeeze(1))
+        encoder_hidden_states = self.text_encoder(input_ids.squeeze(1), attention_mask.squeeze(1))
         
         if self.process_diffusion.config.prediction_type == "epsilon":
             target = noise
