@@ -114,11 +114,11 @@ class DataFASSHIONDIFF(Dataset):
         example['input_ids'] = text_tokenize.input_ids
         example['attention_mask'] = text_tokenize.attention_mask
         
-        print('===================')
-        print(example['attention_mask'])
+        
         try:
             example["pixel_values"] = self.transform(image)
         except Exception as e:
             print(f"Error processing image at path: {path_image}")
             print(f"Error message: {str(e)}")
+        print(example.keys())
         return example
