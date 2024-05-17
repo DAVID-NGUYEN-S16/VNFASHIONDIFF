@@ -14,6 +14,6 @@ class VNCLIP_model(nn.Module):
         
             inputs: (B, S, D)
         '''
-        inp = self.text_encoder(inputs)
+        inp = self.text_encoder(inputs).last_hidden_state
         inp = self.linear_proj(inp)
         return inp
