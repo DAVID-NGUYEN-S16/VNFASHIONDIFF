@@ -104,7 +104,8 @@ def main():
         
         project_config=accelerator_project_config,
     )
-    
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     accelerator.init_trackers(
         project_name = config.wandb['project'],
         init_kwargs={"wandb": {"entity": "davidnguyen", 'tags': config.wandb['tags'], 'name': config.wandb['name']}}
@@ -257,7 +258,7 @@ def main():
     # model.module.vae.to(accelerator.device, dtype=weight_dtype)
     accelerator.unwrap_model(model).text_encoder.to(accelerator.device, dtype=weight_dtype)
     accelerator.unwrap_model(model).vae.to(accelerator.device, dtype=weight_dtype)
-    model.to("cuda")
+    model.to(device)
     # We need to recalculate our total training steps as the size of the training dataloader may have changed.
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / config.gradient_accumulation_steps)
     
