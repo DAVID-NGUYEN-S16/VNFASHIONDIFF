@@ -316,7 +316,7 @@ def main():
         train_loss = 0.0
         for step, batch in enumerate(train_dataloader):
             with accelerator.accumulate(model):
-                print(batch)
+                print(batch.keys())
                 # Convert images to latent space
                 batch["pixel_values"] =batch["pixel_values"].to(accelerator.device).to(weight_dtype)
                 batch["input_ids"] =batch["input_ids"].to(accelerator.device).to(weight_dtype).long()
