@@ -110,10 +110,12 @@ class DataFASSHIONDIFF(Dataset):
         text_tokenize = self.tokenizer(
             text, max_length = 256, padding="max_length", truncation=True, return_tensors="pt"
         )
-        print('===================')
-        print(example['attention_mask'])
+        
         example['input_ids'] = text_tokenize.input_ids
         example['attention_mask'] = text_tokenize.attention_mask
+        
+        print('===================')
+        print(example['attention_mask'])
         try:
             example["pixel_values"] = self.transform(image)
         except Exception as e:
