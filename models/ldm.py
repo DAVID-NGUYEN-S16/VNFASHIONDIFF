@@ -39,6 +39,7 @@ class LatenFashionDIFF(nn.Module):
         #get value of P(x_1|x_0)
         noisy_latents = self.process_diffusion.add_noise(latents, noise, timesteps)
         
+        print(input_ids.size())
         # Get the text embedding for conditioning
         encoder_hidden_states = self.text_encoder(input_ids)
         
