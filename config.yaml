@@ -2,7 +2,7 @@ wandb:
   key_wandb: ac12c873f730f05f115d320f73a1a908c5db8470
   project: "Text-to-image-fashion"
   tags: "LDM-Full-Data"
-  name: "LDM-BASE"
+  name: "LDM-EncoderVN"
 path_checkpoint: null
 input_perturbation : 0
 pretrained_model_name_or_path :  "prompthero/openjourney"
