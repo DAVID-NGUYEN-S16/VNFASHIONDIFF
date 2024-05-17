@@ -18,6 +18,8 @@ from diffusers.utils import is_wandb_available
 from tqdm import tqdm
 from utils import load_config, deepspeed_zero_init_disabled_context_manager
 from models.ldm import LatenFashionDIFF
+from models.clip import VNCLIP_model
+
 from dataset import DataFASSHIONDIFF
 import time
 from accelerate import notebook_launcher
@@ -48,16 +50,18 @@ def main():
     def load_models(config):
         # Load scheduler, tokenizer and models.
         noise_scheduler = DDPMScheduler.from_pretrained(config.pretrained_model_name_or_path, subfolder="scheduler")
-        tokenizer = CLIPTokenizer.from_pretrained(
-            config.pretrained_model_name_or_path, subfolder="tokenizer", revision=config.revision
-        )
+        # tokenizer = CLIPTokenizer.from_pretrained(
+        #     config.pretrained_model_name_or_path, subfolder="tokenizer", revision=config.revision
+        # )
+
+        tokenizer = transformers.AutoTokenizer.from_pretrained('M-CLIP/XLM-Roberta-Large-Vit-L-14')
 
         
-        
         with ContextManagers(deepspeed_zero_init_disabled_context_manager()):
-            text_encoder = CLIPTextModel.from_pretrained(
-                config.pretrained_model_name_or_path, subfolder="text_encoder", revision=config.revision, variant=config.variant
-            )
+            # text_encoder = CLIPTextModel.from_pretrained(
+            #     config.pretrained_model_name_or_path, subfolder="text_encoder", revision=config.revision, variant=config.variant
+            # )
+            text_encoder = VNCLIP_model()
             vae = AutoencoderKL.from_pretrained(
                 config.pretrained_model_name_or_path, subfolder="vae", revision=config.revision, variant=config.variant
             )
@@ -65,6 +69,16 @@ def main():
         unet = UNet2DConditionModel.from_pretrained(
             config.pretrained_model_name_or_path, subfolder="unet", revision=config.non_ema_revision
         )
+        
+        # Đóng băng các thông số của text_encoder
+        for param in text_encoder.parameters():
+            param.requires_grad = False
+
+        # Đóng băng các thông số của vae
+        for param in vae.parameters():
+            param.requires_grad = False
+
+        
         #text_encoder, vae, unet, process_diffusion, scaling_factor
         model = LatenFashionDIFF(
             text_encoder = text_encoder,
