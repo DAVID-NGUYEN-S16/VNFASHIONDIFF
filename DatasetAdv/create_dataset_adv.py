@@ -46,8 +46,8 @@ def main():
 
 
     # Prepare everything with our `accelerator`.
-    model, optimizer, train_dataloader, lr_scheduler = accelerator.prepare(
-        model, optimizer, train_dataloader, lr_scheduler
+    model = accelerator.prepare(
+        model
     )
     
  
