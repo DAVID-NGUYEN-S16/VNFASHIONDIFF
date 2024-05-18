@@ -18,14 +18,14 @@ import torch
 from packaging import version
 from transformers import CLIPImageProcessor, CLIPTextModel, CLIPTokenizer, CLIPVisionModelWithProjection
 
-from diffusion.callbacks import MultiPipelineCallbacks, PipelineCallback
-from diffusion.configuration_utils import FrozenDict
-from diffusion.image_processor import PipelineImageInput, VaeImageProcessor
-from diffusion.loaders import FromSingleFileMixin, IPAdapterMixin, LoraLoaderMixin, TextualInversionLoaderMixin
-from diffusion.models import AutoencoderKL, ImageProjection, UNet2DConditionModel
-from diffusion.models.lora import adjust_lora_scale_text_encoder
-from diffusion.schedulers import KarrasDiffusionSchedulers
-from diffusion.utils import (
+from diffusers.callbacks import MultiPipelineCallbacks, PipelineCallback
+from diffusers.configuration_utils import FrozenDict
+from diffusers.image_processor import PipelineImageInput, VaeImageProcessor
+from diffusers.loaders import FromSingleFileMixin, IPAdapterMixin, LoraLoaderMixin, TextualInversionLoaderMixin
+from diffusers.models import AutoencoderKL, ImageProjection, UNet2DConditionModel
+from diffusers.models.lora import adjust_lora_scale_text_encoder
+from diffusers.schedulers import KarrasDiffusionSchedulers
+from diffusers.utils import (
     USE_PEFT_BACKEND,
     deprecate,
     logging,
@@ -33,10 +33,10 @@ from diffusion.utils import (
     scale_lora_layers,
     unscale_lora_layers,
 )
-from diffusion.utils.torch_utils import randn_tensor
-from diffusion.pipeline_utils import DiffusionPipeline, StableDiffusionMixin
-from diffusion.current_module.pipeline_output import StableDiffusionPipelineOutput
-from diffusion.current_module.safety_checker import StableDiffusionSafetyChecker
+from diffusers.utils.torch_utils import randn_tensor
+from diffusers.pipeline_utils import DiffusionPipeline, StableDiffusionMixin
+from diffusers.current_module.pipeline_output import StableDiffusionPipelineOutput
+from diffusers.current_module.safety_checker import StableDiffusionSafetyChecker
 
 
 
