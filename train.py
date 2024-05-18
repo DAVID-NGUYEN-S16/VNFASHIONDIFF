@@ -342,13 +342,13 @@ def main():
             accelerator.save_state(save_path)
             min_loss = train_loss
             print("Save model")
-            image_eval = []
-            accelerator.unwrap_model(model).set_up()
-            images, caption = accelerator.unwrap_model(model).inference()
-            for img, cap in zip(images, caption):
-                image = wandb.Image(img, caption=cap)
-                image_eval.append(image)
-            accelerator.log({"images": image_eval})
+            # image_eval = []
+            # accelerator.unwrap_model(model).set_up()
+            # images, caption = accelerator.unwrap_model(model).inference()
+            # for img, cap in zip(images, caption):
+            #     image = wandb.Image(img, caption=cap)
+            #     image_eval.append(image)
+            # accelerator.log({"images": image_eval})
         
             logger.info(f"Saved state to {save_path}")
         print({
@@ -363,5 +363,5 @@ def main():
 if __name__ == "__main__":
     # main()
     print(torch.cuda.is_initialized())
-    notebook_launcher(main, args=(), num_processes=2)
+    notebook_launcher(main, args=(), num_processes=1)
 
