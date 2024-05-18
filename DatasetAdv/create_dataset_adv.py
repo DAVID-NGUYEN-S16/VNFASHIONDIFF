@@ -13,7 +13,7 @@ from accelerate.utils import ProjectConfiguration, set_seed
 import glob
 from datasetadv import DataImageADV
 from accelerate import notebook_launcher
-from ..utils import load_config, write_json
+from utils import load_config, write_json
 def main():
     
     logger = get_logger(__name__, log_level="INFO")
