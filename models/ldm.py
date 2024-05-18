@@ -24,10 +24,8 @@ class LatenFashionDIFF(nn.Module):
         self.scaling_factor = vae.config.scaling_factor
         self.tokenizer = tokenizer
         self.set_up()
-    def forward(self, pixel_values, input_ids, attention_mask):
-
+    def forward(self, pixel_values, input_ids):
         latents = self.vae.encode(pixel_values).latent_dist.sample()
-  
         latents = latents * self.scaling_factor
         # create distribution of latens        
         noise = torch.randn_like(latents)
@@ -41,9 +39,8 @@ class LatenFashionDIFF(nn.Module):
         #get value of P(x_1|x_0)
         noisy_latents = self.process_diffusion.add_noise(latents, noise, timesteps)
         
-        # print(input_ids.size())
         # Get the text embedding for conditioning
-        encoder_hidden_states = self.text_encoder(input_ids.squeeze(1), attention_mask.squeeze(1))
+        encoder_hidden_states = self.text_encoder(input_ids, return_dict=False)[0]
         
         if self.process_diffusion.config.prediction_type == "epsilon":
             target = noise
@@ -69,11 +66,12 @@ class LatenFashionDIFF(nn.Module):
     def inference(self, text = None):
         
         if text is None:
-            text = ["cái quần đùi màu đỏ", "áo khoác màu xanh", "Bộ quần áo màu nâu"]
+            text = ["cÃ¡i quáº§n Ä‘Ã¹i mÃ u Ä‘á»", "Ã¡o khoÃ¡c mÃ u xanh", "Bá»™ quáº§n Ã¡o mÃ u nÃ¢u"]
         if isinstance(text, str):
             text =[text]
         images = []
         for t in text:
-            image = self.pipeline(t, num_inference_steps=20, height=128, width=128).images[0]
+            image = self.pipeline(t, num_inference_steps=10, height=224, width=224).images[0]
             images.append(image)
         return images, text
+1
