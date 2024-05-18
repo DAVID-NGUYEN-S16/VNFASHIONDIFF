@@ -1,22 +1,15 @@
-import requests
-from PIL import Image
-from transformers import BlipProcessor, BlipForConditionalGeneration
-import logging
-import math
+from transformers import  BlipForConditionalGeneration
 import os
 import torch
-import torch.nn.functional as F
 import torch.utils.checkpoint
 from accelerate import Accelerator
-from accelerate.logging import get_logger
-from accelerate.utils import ProjectConfiguration, set_seed
+from accelerate.utils import ProjectConfiguration
 import glob
 from datasetadv import DataImageADV
 from accelerate import notebook_launcher
 from utils import load_config, write_json
 def main():
     
-    logger = get_logger(__name__, log_level="INFO")
     
     ## config global
     path_config  = "./config_caption_nike.yaml"
@@ -30,19 +23,6 @@ def main():
         project_config=accelerator_project_config,
     )
 
-
-
-    # Make one log on every process with the configuration for debugging.
-    logging.basicConfig(
-        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-        datefmt="%m/%d/%Y %H:%M:%S",
-        level=logging.INFO,
-    )
-    logger.info(accelerator.state, main_process_only=False)
-
-    # If passed along, set the training seed now.
-    if config.seed is not None:
-        set_seed(config.seed)
 
     # Handle the repository creation
     if accelerator.is_main_process:
@@ -75,6 +55,7 @@ def main():
 
  
     data = {'image': [], "text": []}
+    model.eval()
     with torch.no_grad():
         for step, batch in enumerate(test_dataloader):
             with accelerator.accumulate(model):
