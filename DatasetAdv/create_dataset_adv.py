@@ -7,12 +7,14 @@ from accelerate.utils import ProjectConfiguration
 import glob
 from datasetadv import DataImageADV
 from accelerate import notebook_launcher
+from tqdm import tqdm
+
 from utils import load_config, write_json
 def main():
     
     
     ## config global
-    path_config  = "./config_caption_nike.yaml"
+    path_config  = "./config_caption_GLAMI.yaml"
     
     config = load_config(path_config)
 
@@ -56,6 +58,14 @@ def main():
  
     data = {'image': [], "text": []}
     model.eval()
+    progress_bar = tqdm(
+        range(0, len(test_dataloader)),
+        initial=0,
+        desc="Steps",
+        # Only show the progress bar once on each machine.
+        disable=not accelerator.is_local_main_process,
+    )
+    
     with torch.no_grad():
         for step, batch in enumerate(test_dataloader):
             with accelerator.accumulate(model):
@@ -66,9 +76,11 @@ def main():
                 
                 outs = accelerator.unwrap_model(model).generate(**inputs)
                 texts = test_dataset.processor.batch_decode(outs, skip_special_tokens=True)
-                data['image'] += batch['path_image']
-                data['text'] += texts
-                
+            data['image'] += batch['path_image']
+            data['text'] += texts
+            logs = {"step": f",{step}/{len(test_dataloader)}"}
+            progress_bar.set_postfix(**logs)
+            
     accelerator.wait_for_everyone() 
     
     write_json(f"{config.name_data}.json", data)
