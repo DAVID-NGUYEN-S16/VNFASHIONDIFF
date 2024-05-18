@@ -27,27 +27,7 @@ import torch.multiprocessing as mp
 import gc
 import wandb
 
-
-
-
-def main():
-    logger = get_logger(__name__, log_level="INFO")
-
-    ## config global
-    path_config  = "./config.yaml"
-    config = load_config(path_config)
-
-    wandb.login(key=config.wandb['key_wandb'])
-
-    # run = wandb.init(
-    #     # Set the project where this run will be logged
-    #     project=config.wandb['project'],
-
-        
-    # )
-
-
-    def load_models(config):
+def load_models(config):
         # Load scheduler, tokenizer and models.
         noise_scheduler = DDPMScheduler.from_pretrained(config.pretrained_model_name_or_path, subfolder="scheduler")
         # tokenizer = CLIPTokenizer.from_pretrained(
@@ -88,12 +68,32 @@ def main():
             tokenizer = tokenizer
         )
         return model, tokenizer
-    def collate_fn(examples):
-        pixel_values = torch.stack([example["pixel_values"] for example in examples])
-        pixel_values = pixel_values.to(memory_format=torch.contiguous_format).float()
-        input_ids = torch.stack([example["input_ids"] for example in examples])
-        attention_mask = torch.stack([example["attention_mask"] for example in examples])
-        return {"pixel_values": pixel_values, "input_ids": input_ids, 'attention_mask': attention_mask}
+def collate_fn(examples):
+    pixel_values = torch.stack([example["pixel_values"] for example in examples])
+    pixel_values = pixel_values.to(memory_format=torch.contiguous_format).float()
+    input_ids = torch.stack([example["input_ids"] for example in examples])
+    attention_mask = torch.stack([example["attention_mask"] for example in examples])
+    return {"pixel_values": pixel_values, "input_ids": input_ids, 'attention_mask': attention_mask}
+
+
+def main():
+    logger = get_logger(__name__, log_level="INFO")
+
+    ## config global
+    path_config  = "./config.yaml"
+    config = load_config(path_config)
+
+    wandb.login(key=config.wandb['key_wandb'])
+
+    # run = wandb.init(
+    #     # Set the project where this run will be logged
+    #     project=config.wandb['project'],
+
+        
+    # )
+
+
+    
     logging_dir = os.path.join(config.output_dir, config.logging_dir)
 
     accelerator_project_config = ProjectConfiguration(project_dir=config.output_dir, logging_dir=logging_dir)
@@ -259,6 +259,7 @@ def main():
     # model.module.vae.to(accelerator.device, dtype=weight_dtype)
     accelerator.unwrap_model(model).text_encoder.to(accelerator.device, dtype=weight_dtype)
     accelerator.unwrap_model(model).vae.to(accelerator.device, dtype=weight_dtype)
+    print(device)
     model.to(device)
     # We need to recalculate our total training steps as the size of the training dataloader may have changed.
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / config.gradient_accumulation_steps)
