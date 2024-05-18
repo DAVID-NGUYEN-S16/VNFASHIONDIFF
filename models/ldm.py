@@ -30,7 +30,7 @@ class LatenFashionDIFF(nn.Module):
         self.tokenizer = tokenizer
         self.max_length = max_length
         # self.set_up()
-    def forward(self, pixel_values, input_ids, attention_mask):
+    def forward(self, pixel_values, input_ids, attention_mask = None):
         
         
         latents = self.vae.encode(pixel_values).latent_dist.sample()
@@ -48,7 +48,7 @@ class LatenFashionDIFF(nn.Module):
         noisy_latents = self.process_diffusion.add_noise(latents, noise, timesteps)
         
         # Get the text embedding for conditioning
-        encoder_hidden_states = self.text_encoder(input_ids, return_dict=False)[0]
+        encoder_hidden_states = self.text_encoder(input_ids, attention_mask, return_dict=False)[0]
         
         
         if self.process_diffusion.config.prediction_type == "epsilon":

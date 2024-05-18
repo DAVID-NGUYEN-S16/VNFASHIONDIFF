@@ -276,7 +276,10 @@ def main():
                 batch["attention_mask"] =batch["attention_mask"].to(accelerator.device).to(weight_dtype).long()
                 
                 # Predict the noise residual and compute loss
-                target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"], attention_mask = batch['attention_mask'])
+                target, model_pred = model(
+                    pixel_values = batch["pixel_values"], 
+                    input_ids = batch["input_ids"], 
+                    attention_mask = batch['attention_mask'])
 
                 loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
  
