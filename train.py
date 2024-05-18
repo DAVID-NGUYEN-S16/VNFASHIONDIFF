@@ -1,7 +1,6 @@
 import logging
 import math
 import os
-import datasets
 import torch
 import torch.nn.functional as F
 import torch.utils.checkpoint
@@ -9,12 +8,10 @@ import transformers
 from accelerate import Accelerator
 from accelerate.logging import get_logger
 from accelerate.utils import ProjectConfiguration, set_seed
-from transformers import CLIPTextModel, CLIPTokenizer
 from transformers.utils import ContextManagers
 import diffusers
 from diffusers import AutoencoderKL, DDPMScheduler, UNet2DConditionModel
 from diffusers.optimization import get_scheduler
-from diffusers.utils import is_wandb_available
 from tqdm import tqdm
 from utils import load_config, deepspeed_zero_init_disabled_context_manager
 from models.ldm import LatenFashionDIFF
@@ -27,6 +24,7 @@ import torch.multiprocessing as mp
 import gc
 import wandb
 from multilingual_clip import pt_multilingual_clip
+
 def load_models(config):
         # Load scheduler, tokenizer and models.
         noise_scheduler = DDPMScheduler.from_pretrained(config.pretrained_model_name_or_path, subfolder="scheduler")
@@ -77,27 +75,32 @@ def collate_fn(examples):
     attention_mask = torch.stack([example["attention_mask"] for example in examples])
     return {"pixel_values": pixel_values, "input_ids": input_ids, 'attention_mask': attention_mask}
 
+def setting_optimizer(config):
+    # Initialize the optimizer
+    if config.use_8bit_adam:
+        try:
+            import bitsandbytes as bnb
+        except ImportError:
+            raise ImportError(
+                "Please install bitsandbytes to use 8-bit Adam. You can do so by running `pip install bitsandbytes`"
+            )
+        # https://huggingface.co/docs/bitsandbytes/main/en/optimizers
 
+        optimizer_cls = bnb.optim.AdamW8bit
+    else:
+        optimizer_cls = torch.optim.AdamW
+    return optimizer_cls
 def main():
     
-
     logger = get_logger(__name__, log_level="INFO")
-
+    
     ## config global
     path_config  = "./config.yaml"
+    
     config = load_config(path_config)
 
     wandb.login(key=config.wandb['key_wandb'])
 
-    # run = wandb.init(
-    #     # Set the project where this run will be logged
-    #     project=config.wandb['project'],
-
-        
-    # )
-
-
-    
     logging_dir = os.path.join(config.output_dir, config.logging_dir)
 
     accelerator_project_config = ProjectConfiguration(project_dir=config.output_dir, logging_dir=logging_dir)
@@ -115,8 +118,6 @@ def main():
         init_kwargs={"wandb": {"entity": "davidnguyen", 'tags': config.wandb['tags'], 'name': config.wandb['name']}}
         
     )
-
-#     return accelerator
 
     # Disable AMP for MPS.
     if torch.backends.mps.is_available():
@@ -150,22 +151,9 @@ def main():
     # Enable TF32 for faster training on Ampere GPUs,
     if config.allow_tf32:
         torch.backends.cuda.matmul.allow_tf32 = True
-
-
-    # Initialize the optimizer
-    if config.use_8bit_adam:
-        try:
-            import bitsandbytes as bnb
-        except ImportError:
-            raise ImportError(
-                "Please install bitsandbytes to use 8-bit Adam. You can do so by running `pip install bitsandbytes`"
-            )
-        # https://huggingface.co/docs/bitsandbytes/main/en/optimizers
-
-        optimizer_cls = bnb.optim.AdamW8bit
-    else:
-        optimizer_cls = torch.optim.AdamW
-
+    
+    optimizer_cls = setting_optimizer(config=config)
+    
     optimizer = optimizer_cls(
         model.parameters(),
         lr=config.learning_rate,
@@ -174,10 +162,6 @@ def main():
         eps=config.adam_epsilon,
     )
 
-
-
-    
-    
     train_dataset = DataFASSHIONDIFF(
         path_meta = config.data['train'],
         size= config.data['size'],
@@ -239,21 +223,11 @@ def main():
         torch.cuda.empty_cache()
         gc.collect()
 
-    # For mixed precision training we cast all non-trainable weights (vae, non-lora text_encoder and non-lora unet) to half-precision
-    # as these weights are only used for inference, keeping weights in full precision is not required.
     weight_dtype = torch.float32
-    if accelerator.mixed_precision == "fp16":
-        weight_dtype = torch.float16
-        config.mixed_precision = accelerator.mixed_precision
-    elif accelerator.mixed_precision == "bf16":
-        weight_dtype = torch.bfloat16
-        config.mixed_precision = accelerator.mixed_precision
 
     # Move text_encode and vae to gpu and cast to weight_dtype
-
     accelerator.unwrap_model(model).text_encoder.to(accelerator.device, dtype=weight_dtype)
     accelerator.unwrap_model(model).vae.to(accelerator.device, dtype=weight_dtype)
-    # accelerator.unwrap_model(model).to(accelerator.device, dtype=weight_dtype)
     # We need to recalculate our total training steps as the size of the training dataloader may have changed.
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / config.gradient_accumulation_steps)
     
@@ -263,10 +237,7 @@ def main():
     # Afterwards we recalculate our number of training epochs
     config.num_train_epochs = math.ceil(config.max_train_steps / num_update_steps_per_epoch)
 
-
-
     print("Running training")
-
 
     global_step = 0
     first_epoch = 0
@@ -299,7 +270,6 @@ def main():
         train_loss = 0.0
         for step, batch in enumerate(train_dataloader):
             with accelerator.accumulate(model):
-                # print(batch.keys())
                 # Convert images to latent space
                 batch["pixel_values"] =batch["pixel_values"].to(accelerator.device).to(weight_dtype)
                 batch["input_ids"] =batch["input_ids"].to(accelerator.device).to(weight_dtype).long()
@@ -354,14 +324,10 @@ def main():
 
                 # if step == 1: break
 
-        # print('Time inference test') 
-        # print(time.time() - start_time)
         accelerator.wait_for_everyone() 
         
         train_loss = round(train_loss/len(train_dataloader), 4)
-        # test_loss = round(test_loss/len(test_dataloader), 4)
 
-        # accelerator.log({"train_loss": train_loss}, step=global_step)
         accelerator.log(
             {
                 
@@ -370,6 +336,7 @@ def main():
             },
             step=global_step
         )
+        
         if min_loss == None or train_loss <= min_loss:
             save_path = os.path.join(config.output_dir, f"best")
             accelerator.save_state(save_path)
@@ -387,7 +354,6 @@ def main():
         print({
                 'epoch':epoch, 
                 'Train loss': train_loss, 
-                # 'Test loss': test_loss
             })
 
         train_loss = 0.0
@@ -396,7 +362,6 @@ def main():
 
 if __name__ == "__main__":
     # main()
-    # mp.set_start_method('spawn')
     print(torch.cuda.is_initialized())
     notebook_launcher(main, args=(), num_processes=1)
 
