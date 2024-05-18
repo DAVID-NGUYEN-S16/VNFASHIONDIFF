@@ -259,7 +259,7 @@ def main():
     # model.module.vae.to(accelerator.device, dtype=weight_dtype)
     accelerator.unwrap_model(model).text_encoder.to(accelerator.device, dtype=weight_dtype)
     accelerator.unwrap_model(model).vae.to(accelerator.device, dtype=weight_dtype)
-    accelerator.unwrap_model(model).to(accelerator.device, dtype=weight_dtype)
+    # accelerator.unwrap_model(model).to(accelerator.device, dtype=weight_dtype)
     # We need to recalculate our total training steps as the size of the training dataloader may have changed.
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / config.gradient_accumulation_steps)
     
@@ -413,8 +413,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
     # mp.set_start_method('spawn')
     print(torch.cuda.is_initialized())
-    # notebook_launcher(main, args=(), num_processes=2)
+    notebook_launcher(main, args=(), num_processes=2)
 
