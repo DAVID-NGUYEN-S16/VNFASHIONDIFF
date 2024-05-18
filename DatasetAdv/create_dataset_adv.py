@@ -60,7 +60,7 @@ def main():
         for step, batch in enumerate(test_dataloader):
             with accelerator.accumulate(model):
                 # Convert images to latent space
-                inputs = batch['image'].to(accelerator.device).to(weight_dtype)
+                inputs = batch['image'].to(accelerator.device).to(weight_dtype).squeeze(1)
                 
                 outs = accelerator.unwrap_model(model).generate(**inputs)
                 texts = test_dataset.processor.batch_decode(outs, skip_special_tokens=True)
@@ -78,5 +78,5 @@ if __name__ == "__main__":
     
     # paths = glob.glob("./DatasetAdv/*.yaml")
     # for path in paths:
-    notebook_launcher(main, args=(), num_processes=1)
+    notebook_launcher(main, args=(), num_processes=2)
 
