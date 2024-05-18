@@ -15,7 +15,7 @@ class VNCLIPEncoder(nn.Module):
         
             inputs: (B, S, D)
         '''
-        
+        print(input_ids.size)
         inp = self.text_encoder(input_ids,attention_mask = attention_mask ).last_hidden_state
         inp = self.linear_proj(inp)
         return [inp]
