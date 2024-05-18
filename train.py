@@ -26,6 +26,7 @@ from accelerate import notebook_launcher
 import torch.multiprocessing as mp
 import gc
 import wandb
+from multilingual_clip import pt_multilingual_clip
 
 def load_models(config):
         # Load scheduler, tokenizer and models.
@@ -41,7 +42,8 @@ def load_models(config):
             # text_encoder = CLIPTextModel.from_pretrained(
             #     config.pretrained_model_name_or_path, subfolder="text_encoder", revision=config.revision, variant=config.variant
             # )
-            text_encoder = VNCLIP_model()
+            model_encoder = pt_multilingual_clip.MultilingualCLIP.from_pretrained('M-CLIP/XLM-Roberta-Large-Vit-L-14')
+            text_encoder = VNCLIP_model(model_encoder)
             vae = AutoencoderKL.from_pretrained(
                 config.pretrained_model_name_or_path, subfolder="vae", revision=config.revision, variant=config.variant
             )

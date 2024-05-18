@@ -1,12 +1,10 @@
 import torch.nn as nn
-from multilingual_clip import pt_multilingual_clip
 
 class VNCLIP_model(nn.Module):
-    def __init__(self, name_model = 'M-CLIP/XLM-Roberta-Large-Vit-L-14'):
+    def __init__(self, model):
         super().__init__()
-        self.model = pt_multilingual_clip.MultilingualCLIP.from_pretrained(name_model)
-        self.text_encoder = self.model.transformer
-        self.linear_proj = self.model.LinearTransformation
+        self.text_encoder = model.transformer
+        self.linear_proj = model.LinearTransformation
     def forward(self, input_ids, attention_mask):
         '''
         Return last_hidden_state from input
