@@ -15,7 +15,7 @@ from diffusers.optimization import get_scheduler
 from tqdm import tqdm
 from utils import load_config, deepspeed_zero_init_disabled_context_manager
 from models.ldm import LatenFashionDIFF
-from models.clip import VNCLIP_model
+from models.clip import VNCLIPEncoder
 
 from dataset import DataFASSHIONDIFF
 import time
@@ -41,7 +41,7 @@ def load_models(config):
             # )
             model_encoderx = pt_multilingual_clip.MultilingualCLIP.from_pretrained('M-CLIP/XLM-Roberta-Large-Vit-L-14')
             
-            text_encoder = VNCLIP_model(model_encoderx, load_config("./config_clip.yaml"))
+            text_encoder = VNCLIPEncoder(model_encoderx, load_config("./config_clip.yaml"))
             vae = AutoencoderKL.from_pretrained(
                 config.pretrained_model_name_or_path, subfolder="vae", revision=config.revision, variant=config.variant
             )

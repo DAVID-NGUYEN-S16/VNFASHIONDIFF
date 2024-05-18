@@ -15,7 +15,7 @@ class PIPELINE_VNFASHION:
                  dtype = torch.float32, 
                  device = 'cuda', 
                  guidance_scale = 7.5,
-                 generator  = None):
+                 generator  = None, use_attention_mask = False):
         super().__init__()
         self.vae = vae.to(device)
         self.text_encoder = text_encoder.to(device)
@@ -28,6 +28,7 @@ class PIPELINE_VNFASHION:
         self.generator  = generator 
         self.guidance_scale = guidance_scale
         self.device = device
+        self.use_attention_mask= use_attention_mask
     def encoder_prompt(self, text):
         print(text)
         if isinstance(text, str):
@@ -39,14 +40,13 @@ class PIPELINE_VNFASHION:
         uncond_input = self.tokenizer(
             [""] , max_length = self.max_length, padding="max_length", truncation=True, return_tensors="pt"
         )
-        if 'input_ids' in text_tokenize.keys() and 'attention_mask' in text_tokenize.keys() and 1 == 3:
+        if self.use_attention_mask :
             with torch.no_grad():
-                print(text_tokenize['input_ids'].to(self.device).squeeze(1).shape)
                 prompt_embeds = self.text_encoder(
-                            text_tokenize['input_ids'].to(self.device).squeeze(1), attention_mask=text_tokenize['attention_mask'].to(self.device).squeeze(1), output_hidden_states=True
+                            text_tokenize['input_ids'].to(self.device), attention_mask=text_tokenize['attention_mask'].to(self.device), output_hidden_states=True
                         )[0]
                 uncond_embeddings = self.text_encoder(
-                            uncond_input['input_ids'].to(self.device).squeeze(1), attention_mask=uncond_input['attention_mask'].to(self.device).squeeze(1), output_hidden_states=True
+                            uncond_input['input_ids'].to(self.device), attention_mask=uncond_input['attention_mask'].to(self.device), output_hidden_states=True
                         )[0]
         else:
             with torch.no_grad():
