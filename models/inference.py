@@ -3,7 +3,9 @@ from diffusers.utils.torch_utils import randn_tensor
 from tqdm import tqdm
 from diffusers.utils.torch_utils import randn_tensor
 from PIL import Image
-
+class OutputVNFASHION:
+    def __init__(self, images):
+        self.images = images
 class PIPELINE_VNFASHION:
     def __init__(self, 
                  vae, 
@@ -104,12 +106,12 @@ class PIPELINE_VNFASHION:
             latents = self.scheduler.step(noise, t, latents).prev_sample
             
         latents = latents / self.vae.config.scaling_factor
-        
+        images = []
         with torch.no_grad():
             image = self.vae.decode(latents).sample[0]
         image = (image/2 + 0.5).clamp(0, 1).squeeze()
         
         image = (image.permute(1, 2, 0)*255).to(torch.uint8).cpu().numpy()
         image = Image.fromarray(image)
-        
-        return image
+        images.append(image)
+        return OutputVNFASHION(images= images)
