@@ -14,7 +14,7 @@ def main():
     
     
     ## config global
-    path_config  = "./config_caption_GLAMI.yaml"
+    path_config  = "./config_caption_nike.yaml"
     
     config = load_config(path_config)
 
@@ -38,7 +38,8 @@ def main():
     test_dataset = DataImageADV(
         config=config
     )
-    
+    print(f"Length Dataset: {len(test_dataset)}")
+    print(f"Batch size: {config.batch_size}")
     test_dataloader = torch.utils.data.DataLoader(
             test_dataset,
             shuffle=True,
