@@ -35,15 +35,15 @@ def load_models(config):
             config.pretrained_model_name_or_path, subfolder="tokenizer", revision=config.revision
         )
 
-        # tokenizer = transformers.AutoTokenizer.from_pretrained('M-CLIP/XLM-Roberta-Large-Vit-L-14')
+        tokenizerx = transformers.AutoTokenizer.from_pretrained('M-CLIP/XLM-Roberta-Large-Vit-L-14')
 
         
         with ContextManagers(deepspeed_zero_init_disabled_context_manager()):
             text_encoder = CLIPTextModel.from_pretrained(
                 config.pretrained_model_name_or_path, subfolder="text_encoder", revision=config.revision, variant=config.variant
             )
-            # model_encoder = pt_multilingual_clip.MultilingualCLIP.from_pretrained('M-CLIP/XLM-Roberta-Large-Vit-L-14')
-            # text_encoder = VNCLIP_model(model_encoder)
+            model_encoderx = pt_multilingual_clip.MultilingualCLIP.from_pretrained('M-CLIP/XLM-Roberta-Large-Vit-L-14')
+            text_encoderx = VNCLIP_model(model_encoderx)
             vae = AutoencoderKL.from_pretrained(
                 config.pretrained_model_name_or_path, subfolder="vae", revision=config.revision, variant=config.variant
             )
