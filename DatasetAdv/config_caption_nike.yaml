@@ -1,5 +1,5 @@
 name_model: "Salesforce/blip-image-captioning-large"
 path_data: "/kaggle/input/cv-ck-crawl/nike_final/nike/"
-batch_size: 200
+batch_size: 150
 name_data: "nike"
 output_dir: "./output"
