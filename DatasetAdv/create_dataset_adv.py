@@ -102,5 +102,5 @@ def main():
 if __name__ == "__main__":
     
     paths = glob.glob("./DatasetAdv/*.yaml")
-    notebook_launcher(main, args=(), num_processes=1)
+    notebook_launcher(main, args=(), num_processes=2)
 
