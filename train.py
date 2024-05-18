@@ -107,7 +107,6 @@ def main():
         
         project_config=accelerator_project_config,
     )
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     accelerator.init_trackers(
         project_name = config.wandb['project'],
@@ -418,5 +417,5 @@ if __name__ == "__main__":
     # main()
     # mp.set_start_method('spawn')
     print(torch.cuda.is_initialized())
-    notebook_launcher(main, args=(), num_processes=2)
+    notebook_launcher(main, args=(), num_processes=1)
 
