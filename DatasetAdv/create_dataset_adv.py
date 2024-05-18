@@ -78,5 +78,5 @@ if __name__ == "__main__":
     
     # paths = glob.glob("./DatasetAdv/*.yaml")
     # for path in paths:
-    notebook_launcher(main, args=(), num_processes=2)
+    notebook_launcher(main, args=(), num_processes=1)
 
