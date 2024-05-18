@@ -1,0 +1,4 @@
+name_model: "Salesforce/blip-image-captioning-large"
+path_data: "/kaggle/input/cv-ck-dataset/images/"
+batch_size: 100
+name_data: "GLAMI"

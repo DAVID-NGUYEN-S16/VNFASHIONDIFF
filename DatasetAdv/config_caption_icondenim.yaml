@@ -1,0 +1,4 @@
+name_model: "Salesforce/blip-image-captioning-large"
+path_data: "/kaggle/input/cv-ck-crawl/icondenim_final/icondenim/"
+batch_size: 100
+name_data: "icondenim"
