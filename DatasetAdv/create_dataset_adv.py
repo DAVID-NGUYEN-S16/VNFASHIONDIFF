@@ -14,7 +14,7 @@ def main():
     
     
     ## config global
-    path_config  = "./config_caption_GLAMI.yaml"
+    path_config  = "./config_caption_icondenim.yaml"
     
     config = load_config(path_config)
 
