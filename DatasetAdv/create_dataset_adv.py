@@ -62,7 +62,7 @@ def main():
                 # Convert images to latent space
                 inputs = batch['image'].to(accelerator.device).to(weight_dtype)
                 
-                outs = model.generate(**inputs)
+                outs = accelerator.unwrap_model(model).generate(**inputs)
                 texts = test_dataset.processor.batch_decode(outs, skip_special_tokens=True)
                 data['image'] += batch['path_image']
                 data['text'] += texts
