@@ -413,8 +413,8 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
+    main()
     # mp.set_start_method('spawn')
     print(torch.cuda.is_initialized())
-    notebook_launcher(main, args=(), num_processes=2)
+    # notebook_launcher(main, args=(), num_processes=2)
 

@@ -25,10 +25,9 @@ class LatenFashionDIFF(nn.Module):
         self.tokenizer = tokenizer
         self.set_up()
     def forward(self, pixel_values, input_ids, attention_mask):
-        # try:
+
         latents = self.vae.encode(pixel_values).latent_dist.sample()
-        # except:
-        #     print(self.vae)
+  
         latents = latents * self.scaling_factor
         # create distribution of latens        
         noise = torch.randn_like(latents)
