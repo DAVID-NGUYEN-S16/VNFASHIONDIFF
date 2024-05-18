@@ -28,7 +28,9 @@ import gc
 import wandb
 from multilingual_clip import pt_multilingual_clip
 
-def load_models(config):
+
+def main():
+    def load_models(config):
         # Load scheduler, tokenizer and models.
         noise_scheduler = DDPMScheduler.from_pretrained(config.pretrained_model_name_or_path, subfolder="scheduler")
         # tokenizer = CLIPTokenizer.from_pretrained(
@@ -70,15 +72,14 @@ def load_models(config):
             tokenizer = tokenizer
         )
         return model, tokenizer
-def collate_fn(examples):
-    pixel_values = torch.stack([example["pixel_values"] for example in examples])
-    pixel_values = pixel_values.to(memory_format=torch.contiguous_format).float()
-    input_ids = torch.stack([example["input_ids"] for example in examples])
-    attention_mask = torch.stack([example["attention_mask"] for example in examples])
-    return {"pixel_values": pixel_values, "input_ids": input_ids, 'attention_mask': attention_mask}
+    def collate_fn(examples):
+        pixel_values = torch.stack([example["pixel_values"] for example in examples])
+        pixel_values = pixel_values.to(memory_format=torch.contiguous_format).float()
+        input_ids = torch.stack([example["input_ids"] for example in examples])
+        attention_mask = torch.stack([example["attention_mask"] for example in examples])
+        return {"pixel_values": pixel_values, "input_ids": input_ids, 'attention_mask': attention_mask}
 
 
-def main():
     logger = get_logger(__name__, log_level="INFO")
 
     ## config global
