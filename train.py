@@ -92,7 +92,8 @@ def main():
         pixel_values = torch.stack([example["pixel_values"] for example in examples])
         pixel_values = pixel_values.to(memory_format=torch.contiguous_format).float()
         input_ids = torch.stack([example["input_ids"] for example in examples])
-        return {"pixel_values": pixel_values, "input_ids": input_ids}
+        attention_mask = torch.stack([example["attention_mask"] for example in examples])
+        return {"pixel_values": pixel_values, "input_ids": input_ids, 'attention_mask': attention_mask}
     logging_dir = os.path.join(config.output_dir, config.logging_dir)
 
     accelerator_project_config = ProjectConfiguration(project_dir=config.output_dir, logging_dir=logging_dir)
@@ -316,7 +317,7 @@ def main():
         train_loss = 0.0
         for step, batch in enumerate(train_dataloader):
             with accelerator.accumulate(model):
-                print(batch.keys())
+                # print(batch.keys())
                 # Convert images to latent space
                 batch["pixel_values"] =batch["pixel_values"].to(accelerator.device).to(weight_dtype)
                 batch["input_ids"] =batch["input_ids"].to(accelerator.device).to(weight_dtype).long()

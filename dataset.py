@@ -120,5 +120,5 @@ class DataFASSHIONDIFF(Dataset):
         except Exception as e:
             print(f"Error processing image at path: {path_image}")
             print(f"Error message: {str(e)}")
-        print(example.keys())
+        # print(example.keys())
         return example
