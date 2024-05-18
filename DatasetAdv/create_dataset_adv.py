@@ -61,8 +61,8 @@ def main():
             with accelerator.accumulate(model):
                 # Convert images to latent space
                 inputs = batch['image'].to(accelerator.device).to(weight_dtype)
-                print(inputs.shape)
-                if len(inputs.shape) > 4:
+                print(inputs)
+                if len(inputs.size) > 4:
                     inputs = inputs.squeeze(1)
                 
                 outs = accelerator.unwrap_model(model).generate(**inputs)
