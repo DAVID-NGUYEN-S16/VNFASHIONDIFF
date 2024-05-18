@@ -931,6 +931,7 @@ class StableDiffusionPipeline(
         lora_scale = (
             self.cross_attention_kwargs.get("scale", None) if self.cross_attention_kwargs is not None else None
         )
+        
 
         prompt_embeds, negative_prompt_embeds = self.encode_prompt(
             prompt,
@@ -943,10 +944,10 @@ class StableDiffusionPipeline(
             lora_scale=lora_scale,
             clip_skip=self.clip_skip,
         )
-
         # For classifier free guidance, we need to do two forward passes.
         # Here we concatenate the unconditional and text embeddings into a single batch
         # to avoid doing two forward passes
+        
         if self.do_classifier_free_guidance:
             prompt_embeds = torch.cat([negative_prompt_embeds, prompt_embeds])
 
@@ -966,6 +967,7 @@ class StableDiffusionPipeline(
 
         # 5. Prepare latent variables
         num_channels_latents = self.unet.config.in_channels
+        
         latents = self.prepare_latents(
             batch_size * num_images_per_prompt,
             num_channels_latents,

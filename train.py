@@ -27,10 +27,7 @@ import torch.multiprocessing as mp
 import gc
 import wandb
 from multilingual_clip import pt_multilingual_clip
-
-
-def main():
-    def load_models(config):
+def load_models(config):
         # Load scheduler, tokenizer and models.
         noise_scheduler = DDPMScheduler.from_pretrained(config.pretrained_model_name_or_path, subfolder="scheduler")
         # tokenizer = CLIPTokenizer.from_pretrained(
@@ -73,13 +70,16 @@ def main():
             tokenizer = tokenizer
         )
         return model, tokenizer
-    def collate_fn(examples):
-        pixel_values = torch.stack([example["pixel_values"] for example in examples])
-        pixel_values = pixel_values.to(memory_format=torch.contiguous_format).float()
-        input_ids = torch.stack([example["input_ids"] for example in examples])
-        attention_mask = torch.stack([example["attention_mask"] for example in examples])
-        return {"pixel_values": pixel_values, "input_ids": input_ids, 'attention_mask': attention_mask}
+def collate_fn(examples):
+    pixel_values = torch.stack([example["pixel_values"] for example in examples])
+    pixel_values = pixel_values.to(memory_format=torch.contiguous_format).float()
+    input_ids = torch.stack([example["input_ids"] for example in examples])
+    attention_mask = torch.stack([example["attention_mask"] for example in examples])
+    return {"pixel_values": pixel_values, "input_ids": input_ids, 'attention_mask': attention_mask}
 
+
+def main():
+    
 
     logger = get_logger(__name__, log_level="INFO")
 
@@ -129,14 +129,6 @@ def main():
         level=logging.INFO,
     )
     logger.info(accelerator.state, main_process_only=False)
-    if accelerator.is_local_main_process:
-        datasets.utils.logging.set_verbosity_warning()
-        transformers.utils.logging.set_verbosity_warning()
-        diffusers.utils.logging.set_verbosity_info()
-    else:
-        datasets.utils.logging.set_verbosity_error()
-        transformers.utils.logging.set_verbosity_error()
-        diffusers.utils.logging.set_verbosity_error()
 
     # If passed along, set the training seed now.
     if config.seed is not None:
@@ -258,8 +250,7 @@ def main():
         config.mixed_precision = accelerator.mixed_precision
 
     # Move text_encode and vae to gpu and cast to weight_dtype
-    # model.module.text_encoder.to(accelerator.device, dtype=weight_dtype)
-    # model.module.vae.to(accelerator.device, dtype=weight_dtype)
+
     accelerator.unwrap_model(model).text_encoder.to(accelerator.device, dtype=weight_dtype)
     accelerator.unwrap_model(model).vae.to(accelerator.device, dtype=weight_dtype)
     # accelerator.unwrap_model(model).to(accelerator.device, dtype=weight_dtype)
@@ -272,23 +263,11 @@ def main():
     # Afterwards we recalculate our number of training epochs
     config.num_train_epochs = math.ceil(config.max_train_steps / num_update_steps_per_epoch)
 
-    # We need to initialize the trackers we use, and also store our configuration.
-    # The trackers initializes automatically on the main process.
-    # if accelerator.is_main_process:
-    #     tracker_config = dict(vars(config))
-    #     # print(tracker_config)
-    #     # tracker_config.pop("validation_prompts")
-    #     accelerator.init_trackers(config.tracker_project_name, tracker_config)
 
 
     print("Running training")
 
-    logger.info("***** Running training *****")
-    logger.info(f"  Num examples = {len(train_dataset)}")
-    logger.info(f"  Num Epochs = {config.num_train_epochs}")
-    logger.info(f"  Instantaneous batch size per device = {config.train_batch_size}")
-    logger.info(f"  Gradient Accumulation steps = {config.gradient_accumulation_steps}")
-    logger.info(f"  Total optimization steps = {config.max_train_steps}")
+
     global_step = 0
     first_epoch = 0
 
