@@ -1,12 +1,13 @@
 import torch.nn as nn
-from utils import load_config
+import torch
 class VNCLIP_model(nn.Module):
     def __init__(self, model, config = None):
         super().__init__()
         self.config = config
-
+        self.dtype = torch.float32
         self.text_encoder = model.transformer
         self.linear_proj = model.LinearTransformation
+        
     def forward(self, input_ids, attention_mask):
         '''
         Return last_hidden_state from input
