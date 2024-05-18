@@ -204,7 +204,7 @@ def proces_data(list_path_datasets, file_name = "data"):
         for key in data.keys():
             data[key] += sub_meta[key]
         write_json(file_name, data)
-        write_json("name_dataset.json", sub_meta)
+        write_json(f"{name_dataset}.json", sub_meta)
     logging.info(f"Dataset: FINAL \n  Have {len(data['text'])} samples")
 
         
