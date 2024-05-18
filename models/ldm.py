@@ -74,4 +74,3 @@ class LatenFashionDIFF(nn.Module):
             image = self.pipeline(t, num_inference_steps=10, height=224, width=224).images[0]
             images.append(image)
         return images, text
-1
