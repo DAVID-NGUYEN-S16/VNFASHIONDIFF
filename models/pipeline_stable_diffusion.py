@@ -417,7 +417,11 @@ class StableDiffusionPipeline(
 
         prompt_embeds = prompt_embeds.to(dtype=prompt_embeds_dtype, device=device)
         print(prompt_embeds.shape)
-        bs_embed, seq_len, _ = prompt_embeds.shape
+        if len(prompt_embeds.shape) == 3:
+            bs_embed, seq_len, _ = prompt_embeds.shape
+        if len(prompt_embeds.shape) == 2:
+            bs_embed = 1
+            seq_len, _ = prompt_embeds.shape
         # duplicate text embeddings for each generation per prompt, using mps friendly method
         prompt_embeds = prompt_embeds.repeat(1, num_images_per_prompt, 1)
         prompt_embeds = prompt_embeds.view(bs_embed * num_images_per_prompt, seq_len, -1)
