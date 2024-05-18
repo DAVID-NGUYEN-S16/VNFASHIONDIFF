@@ -66,7 +66,8 @@ def load_models(config):
             unet = unet, 
             process_diffusion = noise_scheduler, 
             tokenizer = tokenizer,
-            use_attention_mask = config.use_attention_mask
+            use_attention_mask = config.use_attention_mask,
+            max_length = config.max_length
         )
         return model, tokenizer
 def collate_fn(examples):
@@ -169,7 +170,8 @@ def main():
         interpolation="bicubic",
         flip_p=0.5, 
         tokenizer = tokenizer,
-        train = True
+        train = True,
+        max_length = config.max_length
     )
     
     train_dataloader = torch.utils.data.DataLoader(

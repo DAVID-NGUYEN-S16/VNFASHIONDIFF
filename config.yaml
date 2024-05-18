@@ -4,6 +4,7 @@ wandb:
   tags: "LDM-Full-Data"
   name: "LDM-EncoderVN"
 use_attention_mask: True
+max_length : 512
 path_checkpoint: null
 input_perturbation : 0
 pretrained_model_name_or_path :  "prompthero/openjourney"

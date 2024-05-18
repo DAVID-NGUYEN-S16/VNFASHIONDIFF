@@ -46,7 +46,8 @@ class DataFASSHIONDIFF(Dataset):
                  interpolation="bicubic",
                  flip_p=0.5, 
                  tokenizer = None, 
-                 train = False
+                 train = False,
+                 max_length = 77
                  ):
 #         super(DataFASSHIONDIFF, self).__init__()
         with open(path_meta, 'r') as file:
@@ -55,7 +56,7 @@ class DataFASSHIONDIFF(Dataset):
         self._length = len(self.meta['image'])
         print(self._length)
         self.tokenizer = tokenizer
-   
+        self.max_length = max_length
         self.size = size
  
         
@@ -108,7 +109,7 @@ class DataFASSHIONDIFF(Dataset):
         
         example = dict()
         text_tokenize = self.tokenizer(
-            text, max_length = 77, padding="max_length", truncation=True, return_tensors="pt"
+            text, max_length = self.max_length, padding="max_length", truncation=True, return_tensors="pt"
         )
         
         example['input_ids'] = text_tokenize.input_ids

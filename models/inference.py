@@ -32,7 +32,6 @@ class PIPELINE_VNFASHION:
         self.device = device
         self.use_attention_mask= use_attention_mask
     def encoder_prompt(self, text):
-        print(text)
         if isinstance(text, str):
             text = [text]
         
