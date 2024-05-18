@@ -14,7 +14,7 @@ def main():
     
     
     ## config global
-    path_config  = "./config_caption_nike.yaml"
+    path_config  = "./config_caption_GLAMI.yaml"
     
     config = load_config(path_config)
 
