@@ -24,7 +24,7 @@ class LatenFashionDIFF(nn.Module):
         self.scaling_factor = vae.config.scaling_factor
         self.tokenizer = tokenizer
         self.set_up()
-    def forward(self, pixel_values, input_ids):
+    def forward(self, pixel_values, input_ids, attention_mask):
         latents = self.vae.encode(pixel_values).latent_dist.sample()
         latents = latents * self.scaling_factor
         # create distribution of latens        
