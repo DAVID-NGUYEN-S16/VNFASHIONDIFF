@@ -108,7 +108,7 @@ class DataFASSHIONDIFF(Dataset):
         
         example = dict()
         text_tokenize = self.tokenizer(
-            text, max_length = 256, padding="max_length", truncation=True, return_tensors="pt"
+            text, max_length = 77, padding="max_length", truncation=True, return_tensors="pt"
         )
         
         example['input_ids'] = text_tokenize.input_ids
