@@ -69,7 +69,7 @@ class LatenFashionDIFF(nn.Module):
             unet=self.model.diffusion_model,
             scheduler = self.process_diffusion,
             max_length = self.max_length,
-            device = self.text_encoder.device
+            device = self.vae.device
         )
     def inference(self, text = None):
         
