@@ -3,9 +3,7 @@ import torch
 import torch.utils.checkpoint
 import torch.nn as nn
 # from diffusers import StableDiffusionPipeline
-from utils import preprocess_text
-from .pipeline_stable_diffusion import StableDiffusionPipeline
-
+from .inference import PIPELINE_VNFASHION
 class DiffusionWrapper(nn.Module):
     def __init__(self, diffusion_model: None):
         super().__init__()
@@ -15,7 +13,14 @@ class DiffusionWrapper(nn.Module):
         return self.diffusion_model(x, time_steps, context, return_dict=False)
         
 class LatenFashionDIFF(nn.Module):
-    def __init__(self, text_encoder, vae, unet, process_diffusion, tokenizer):
+    def __init__(self, 
+                 text_encoder, 
+                 vae, 
+                 unet, 
+                 process_diffusion, 
+                 tokenizer, 
+                 max_length = 77, 
+                 ):
         super().__init__()
         self.model = DiffusionWrapper(unet)
         self.text_encoder = text_encoder.requires_grad_(False)
@@ -23,6 +28,7 @@ class LatenFashionDIFF(nn.Module):
         self.process_diffusion = process_diffusion
         self.scaling_factor = vae.config.scaling_factor
         self.tokenizer = tokenizer
+        self.max_length = max_length
         # self.set_up()
     def forward(self, pixel_values, input_ids, attention_mask):
         
@@ -56,15 +62,14 @@ class LatenFashionDIFF(nn.Module):
         
         return target, model_pred
     def set_up(self):
-        self.pipeline = StableDiffusionPipeline(
+        self.pipeline = PIPELINE_VNFASHION(
             vae=self.vae,
             text_encoder=self.text_encoder,
             tokenizer=self.tokenizer,
             unet=self.model.diffusion_model,
             scheduler = self.process_diffusion,
-            safety_checker = None,
-            feature_extractor= None,
-            requires_safety_checker= True,
+            max_length = self.max_length,
+            device = self.text_encoder.device
         )
     def inference(self, text = None):
         
@@ -74,6 +79,6 @@ class LatenFashionDIFF(nn.Module):
             text =[text]
         images = []
         for t in text:
-            image = self.pipeline(t, num_inference_steps=30, height=128, width=128).images[0]
+            image = self.pipeline(t, num_inference_steps=60, height=128, width=128).images[0]
             images.append(image)
         return images, text
