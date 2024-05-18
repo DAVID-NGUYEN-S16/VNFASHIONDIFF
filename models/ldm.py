@@ -23,7 +23,7 @@ class LatenFashionDIFF(nn.Module):
         self.process_diffusion = process_diffusion
         self.scaling_factor = vae.config.scaling_factor
         self.tokenizer = tokenizer
-        self.set_up()
+        # self.set_up()
     def forward(self, pixel_values, input_ids, attention_mask):
         
         
@@ -69,11 +69,11 @@ class LatenFashionDIFF(nn.Module):
     def inference(self, text = None):
         
         if text is None:
-            text = ["cÃ¡i quáº§n Ä‘Ã¹i mÃ u Ä‘á»", "Ã¡o khoÃ¡c mÃ u xanh", "Bá»™ quáº§n Ã¡o mÃ u nÃ¢u"]
+            text = ["Cái quần màu đỏ, cái áo khoác màu xanh", "Bộ quần áo màu nâu"]
         if isinstance(text, str):
             text =[text]
         images = []
         for t in text:
-            image = self.pipeline(t, num_inference_steps=10, height=224, width=224).images[0]
+            image = self.pipeline(t, num_inference_steps=30, height=128, width=128).images[0]
             images.append(image)
         return images, text
