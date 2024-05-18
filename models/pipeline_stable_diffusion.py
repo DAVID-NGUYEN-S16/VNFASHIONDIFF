@@ -33,10 +33,11 @@ from diffusion.utils import (
     scale_lora_layers,
     unscale_lora_layers,
 )
-from ...utils.torch_utils import randn_tensor
-from ..pipeline_utils import DiffusionPipeline, StableDiffusionMixin
-from .pipeline_output import StableDiffusionPipelineOutput
-from .safety_checker import StableDiffusionSafetyChecker
+from diffusion.utils.torch_utils import randn_tensor
+from diffusion.pipeline_utils import DiffusionPipeline, StableDiffusionMixin
+from diffusion.current_module.pipeline_output import StableDiffusionPipelineOutput
+from diffusion.current_module.safety_checker import StableDiffusionSafetyChecker
+
 
 
 logger = logging.get_logger(__name__)  # pylint: disable=invalid-name

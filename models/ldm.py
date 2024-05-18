@@ -2,6 +2,7 @@
 import torch
 import torch.utils.checkpoint
 import torch.nn as nn
+# from diffusers import StableDiffusionPipeline
 from utils import preprocess_text
 from pipeline_stable_diffusion import StableDiffusionPipeline
 
