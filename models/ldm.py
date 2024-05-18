@@ -26,7 +26,6 @@ class LatenFashionDIFF(nn.Module):
         self.set_up()
     def forward(self, pixel_values, input_ids, attention_mask):
         
-        print(pixel_values.size())
         
         latents = self.vae.encode(pixel_values).latent_dist.sample()
         latents = latents * self.scaling_factor
