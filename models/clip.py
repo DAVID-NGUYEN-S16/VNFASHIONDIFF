@@ -1,8 +1,10 @@
 import torch.nn as nn
-
+from utils import load_config
 class VNCLIP_model(nn.Module):
-    def __init__(self, model):
+    def __init__(self, model, config = None):
         super().__init__()
+        self.config = config
+
         self.text_encoder = model.transformer
         self.linear_proj = model.LinearTransformation
     def forward(self, input_ids, attention_mask):
