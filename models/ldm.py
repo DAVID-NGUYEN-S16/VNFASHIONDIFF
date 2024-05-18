@@ -20,6 +20,7 @@ class LatenFashionDIFF(nn.Module):
                  process_diffusion, 
                  tokenizer, 
                  max_length = 77, 
+                 use_attention_mask = False
                  ):
         super().__init__()
         self.model = DiffusionWrapper(unet)
@@ -29,6 +30,7 @@ class LatenFashionDIFF(nn.Module):
         self.scaling_factor = vae.config.scaling_factor
         self.tokenizer = tokenizer
         self.max_length = max_length
+        self.use_attention_mask = use_attention_mask
         # self.set_up()
     def forward(self, pixel_values, input_ids, attention_mask = None):
         
@@ -69,7 +71,8 @@ class LatenFashionDIFF(nn.Module):
             unet=self.model.diffusion_model,
             scheduler = self.process_diffusion,
             max_length = self.max_length,
-            device = self.vae.device
+            device = self.vae.device,
+            use_attention_mask= self.use_attention_mask
         )
     def inference(self, text = None):
         

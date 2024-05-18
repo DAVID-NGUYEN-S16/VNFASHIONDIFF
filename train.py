@@ -65,7 +65,8 @@ def load_models(config):
             vae = vae, 
             unet = unet, 
             process_diffusion = noise_scheduler, 
-            tokenizer = tokenizer
+            tokenizer = tokenizer,
+            use_attention_mask = config.use_attention_mask
         )
         return model, tokenizer
 def collate_fn(examples):
