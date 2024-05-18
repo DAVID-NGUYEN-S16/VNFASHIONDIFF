@@ -14,12 +14,12 @@ import glob
 from datasetadv import DataImageADV
 from accelerate import notebook_launcher
 from utils import load_config, write_json
-def main():
+def main(path_config):
     
     logger = get_logger(__name__, log_level="INFO")
     
     ## config global
-    path_config  = "./config_caption.yaml"
+    # path_config  = "./config_caption.yaml"
     
     config = load_config(path_config)
 
@@ -99,5 +99,6 @@ def main():
 if __name__ == "__main__":
     
     paths = glob.glob("./DatasetAdv/*.yaml")
-    notebook_launcher(main, args=(), num_processes=2)
+    for path in paths:
+        notebook_launcher(main, args=(path), num_processes=2)
 
