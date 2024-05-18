@@ -23,10 +23,7 @@ def main():
     
     config = load_config(path_config)
 
-
-    logging_dir = os.path.join(config.output_dir, config.logging_dir)
-
-    accelerator_project_config = ProjectConfiguration(project_dir=config.output_dir, logging_dir=logging_dir)
+    accelerator_project_config = ProjectConfiguration(project_dir=config.output_dir)
 
     accelerator = Accelerator(
         
