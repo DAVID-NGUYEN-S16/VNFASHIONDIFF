@@ -9,17 +9,20 @@ import numpy as np
 import json
 from transformers import BlipProcessor, BlipForConditionalGeneration
 import glob
+
 class DataImageADV(Dataset):
     
     def __init__(self,
                  config
                  ):
         self.processor = BlipProcessor.from_pretrained(config.name_model)
-        print(f"Start: {config.start} --> {config.end}")
-        self.path_images = glob.glob(f"{config.path_data}*.jpg")[config.start: config.end]
-        
+
+        # self.path_images = glob.glob(f"{config.path_data}*.jpg")
  
-        
+        with open(config.path_data, "r") as file:
+            self.path_images = json.load(file)
+        self.path_images = self.path_images['image']
+        self.path_images = [f for f in self.path_images if "cv-ck-dataset" in f]
         
 
     def __len__(self):
