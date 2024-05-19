@@ -42,6 +42,7 @@ def main():
     print(f"Batch size: {config.batch_size}")
     test_dataloader = torch.utils.data.DataLoader(
             test_dataset,
+            shuffle=False,
             batch_size=config.batch_size,
     )
     

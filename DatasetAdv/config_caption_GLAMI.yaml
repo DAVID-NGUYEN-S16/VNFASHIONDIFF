@@ -4,4 +4,4 @@ batch_size: 150
 name_data: "GLAMI"
 output_dir: "./output"
 start: 0
-enc: 70000
+end: 70000
