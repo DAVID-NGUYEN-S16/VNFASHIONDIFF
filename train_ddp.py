@@ -353,7 +353,7 @@ def train(gpu_id):
 
 def process(rank, world_size):
     ddp_setup(rank, world_size)
-    train()
+    train(gpu_id)
     destroy_process_group()
 if __name__ == "__main__":
     world_size = torch.cuda.device_count()
