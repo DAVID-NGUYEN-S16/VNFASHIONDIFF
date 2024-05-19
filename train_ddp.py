@@ -357,5 +357,6 @@ def process(rank, world_size):
     destroy_process_group()
 if __name__ == "__main__":
     world_size = torch.cuda.device_count()
-    mp.spawn(process, args=(world_size), nprocs=world_size)
+    print(f" Using {world_size} GPUs")
+    mp.spawn(process, args=(world_size, ), nprocs=world_size)
 
