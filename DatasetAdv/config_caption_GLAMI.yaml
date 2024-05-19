@@ -3,5 +3,5 @@ path_data: "/kaggle/input/cv-ck-dataset/images/"
 batch_size: 150
 name_data: "GLAMI"
 output_dir: "./output"
-start: 0
-end: 70000
+start: 70000
+end: 140000
