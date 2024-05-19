@@ -72,7 +72,7 @@ def main():
             with accelerator.accumulate(model):
                 # Convert images to latent space
                 inputs = batch['text'].to(accelerator.device).to(weight_dtype)
-                print(inputs.size())
+                print(inputs['input_ids'].size())
                 output_ids = accelerator.unwrap_model(model).generate(
                     **inputs,
                     decoder_start_token_id=test_dataset.tokenizer.lang_code_to_id["vi_VN"],
