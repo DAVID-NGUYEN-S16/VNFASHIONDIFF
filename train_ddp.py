@@ -92,7 +92,7 @@ def collate_fn(examples):
     attention_mask = torch.stack([example["attention_mask"] for example in examples])
     return {"pixel_values": pixel_values, "input_ids": input_ids, 'attention_mask': attention_mask}
 
-def load_dataset(config, tokenizer):
+def load_dataset(config, tokenizer, world_size, rank):
     train_dataset = DataFASSHIONDIFF(
         path_meta = config.data['train'],
         size= config.data['size'],
@@ -102,7 +102,7 @@ def load_dataset(config, tokenizer):
         train = True,
         max_length = config.max_length
     )
-    sampler = DistributedSampler(train_dataset)
+    sampler = DistributedSampler(train_dataset, num_replicas=world_size, rank=rank)
     train_dataloader = torch.utils.data.DataLoader(
             train_dataset,
             shuffle=False,
@@ -184,7 +184,7 @@ def setting_accelerate(config):
             os.makedirs(config.output_dir, exist_ok=True)
     return accelerator
 
-def train(gpu_id):
+def train(gpu_id, world_size, rank):
     path_config  = "./config.yaml"
     
     config = load_config(path_config)
@@ -207,7 +207,7 @@ def train(gpu_id):
     )
 
     
-    train_dataloader, sampler = load_dataset(config=config, tokenizer= tokenizer)
+    train_dataloader, sampler = load_dataset(config=config, tokenizer= tokenizer, world_size = world_size, rank = rank)
     # Scheduler and math around the number of training steps.
     overrode_max_train_steps = False
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / config.gradient_accumulation_steps)
@@ -354,7 +354,7 @@ def train(gpu_id):
 
 def process(rank, world_size):
     ddp_setup(rank, world_size)
-    train(rank)
+    train(rank, rank, world_size)
     destroy_process_group()
 if __name__ == "__main__":
     world_size = torch.cuda.device_count()
