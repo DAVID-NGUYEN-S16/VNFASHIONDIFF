@@ -16,26 +16,22 @@ class DataImageADV(Dataset):
     def __init__(self,
                  config
                  ):
-        self.tokenizer = AutoModelForSeq2SeqLM.from_pretrained("vinai/vinai-translate-en2vi-v2")
+        self.tokenizer = AutoTokenizer.from_pretrained("vinai/vinai-translate-en2vi-v2", src_lang="en_XX")
 
-        # self.path_images = glob.glob(f"{config.path_data}*.jpg")
  
         with open(config.path_data, "r") as file:
             self.path_images = json.load(file)
-        self.path_images = self.path_images['image']
-        self.path_images = [f for f in self.path_images if "cv-ck-dataset" in f]
         
 
     def __len__(self):
-        return len(self.path_images)
+        return len(self.path_images['image'])
 
     def __getitem__(self, i):
         
-        image = Image.open(self.path_images[i]).convert('RGB')
-        
-        pro_image = self.processor(image, return_tensors="pt")
-        # print(example.keys())
+        input_ids = self.tokenizer(self.path_images['text'][i], padding=True, return_tensors="pt")
+
+
         return {
-            "image": pro_image,
-            "path_image": self.path_images[i]
+            "image": self.path_images['image'][i],
+            "text": input_ids
         }
