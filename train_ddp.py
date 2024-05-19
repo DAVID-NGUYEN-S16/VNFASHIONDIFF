@@ -207,7 +207,7 @@ def train(gpu_id):
     )
 
     
-
+    train_dataloader = load_dataset(config=config, tokenizer= tokenizer)
     # Scheduler and math around the number of training steps.
     overrode_max_train_steps = False
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / config.gradient_accumulation_steps)
@@ -274,7 +274,7 @@ def train(gpu_id):
     start_time = time.time()
 
     
-    train_dataloader = load_dataset(config=config, tokenizer= tokenizer)
+    
     for epoch in range(first_epoch, config.num_train_epochs):
         
         train_dataloader.sampler.set_epoch(epoch)
