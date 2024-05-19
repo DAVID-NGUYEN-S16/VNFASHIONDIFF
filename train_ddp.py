@@ -102,7 +102,7 @@ def load_dataset(config, tokenizer, world_size, rank):
         train = True,
         max_length = config.max_length
     )
-    sampler = DistributedSampler(train_dataset, num_replicas=world_size, rank=rank)
+    sampler = DistributedSampler(train_dataset)
     train_dataloader = torch.utils.data.DataLoader(
             train_dataset,
             shuffle=False,
