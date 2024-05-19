@@ -238,12 +238,13 @@ def train(gpu_id):
         torch.cuda.empty_cache()
         gc.collect()
 
+    print(1)
     weight_dtype = torch.float32
 
     # Move text_encode and vae to gpu and cast to weight_dtype
     model.module.text_encoder.to(gpu_id, dtype=weight_dtype)
     model.module.vae.to(gpu_id, dtype=weight_dtype)
-    
+    print(2)
     # We need to recalculate our total training steps as the size of the training dataloader may have changed.
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / config.gradient_accumulation_steps)
     
@@ -276,7 +277,7 @@ def train(gpu_id):
     
     
     for epoch in range(first_epoch, config.num_train_epochs):
-        
+        print(3)
         train_dataloader.sampler.set_epoch(epoch)
         
         model.train()
@@ -300,7 +301,7 @@ def train(gpu_id):
                 # Gather the losses across all processes for logging (if we use distributed training).
                 avg_loss = accelerator.gather(loss.repeat(config.train_batch_size)).mean()
                 train_loss += avg_loss.item() / config.gradient_accumulation_steps
-
+                print(4)
                 # Backpropagate
                 accelerator.backward(loss)
                 if accelerator.sync_gradients:
@@ -308,7 +309,7 @@ def train(gpu_id):
                 optimizer.step()
                 lr_scheduler.step()
                 optimizer.zero_grad()
-
+                print(5)
             logs = {"step": f",{step}/{len(train_dataloader)}", "step_loss": loss.detach().item(), "lr": lr_scheduler.get_last_lr()[0]}
             progress_bar.set_postfix(**logs)
 
