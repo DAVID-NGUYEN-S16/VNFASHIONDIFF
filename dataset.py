@@ -1,7 +1,7 @@
 import glob
 import torchvision.transforms as transforms
 import os
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 from PIL import Image

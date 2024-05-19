@@ -102,7 +102,7 @@ def load_dataset(config, tokenizer):
         train = True,
         max_length = config.max_length
     )
-    
+    sampler = DistributedSampler(train_dataset)
     train_dataloader = torch.utils.data.DataLoader(
             train_dataset,
             shuffle=False,
@@ -110,7 +110,7 @@ def load_dataset(config, tokenizer):
             batch_size=config.train_batch_size,
             sampler=DistributedSampler(train_dataset)
         )
-    return train_dataloader
+    return train_dataloader, sampler
 def setting_optimizer(config):
     # Initialize the optimizer
     if config.use_8bit_adam:
@@ -207,7 +207,7 @@ def train(gpu_id):
     )
 
     
-    train_dataloader = load_dataset(config=config, tokenizer= tokenizer)
+    train_dataloader, sampler = load_dataset(config=config, tokenizer= tokenizer)
     # Scheduler and math around the number of training steps.
     overrode_max_train_steps = False
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / config.gradient_accumulation_steps)
@@ -278,7 +278,7 @@ def train(gpu_id):
     
     for epoch in range(first_epoch, config.num_train_epochs):
         print(3)
-        train_dataloader.sampler.set_epoch(epoch)
+        sampler.set_epoch(epoch)
         
         model.train()
         train_loss = 0.0
