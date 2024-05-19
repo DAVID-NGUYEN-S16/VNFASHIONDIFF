@@ -14,7 +14,7 @@ def main():
     
     
     ## config global
-    path_config  = "./config_caption_icondenim.yaml"
+    path_config  = "./config_caption_nike.yaml"
     
     config = load_config(path_config)
 
@@ -81,10 +81,11 @@ def main():
             data['text'] += texts
             logs = {"step": f",{step}/{len(test_dataloader)}"}
             progress_bar.set_postfix(**logs)
+            write_json(f"{config.name_data}.json", data)
             
     accelerator.wait_for_everyone() 
     
-    write_json(f"{config.name_data}.json", data)
+    
         
     accelerator.end_training()
 
