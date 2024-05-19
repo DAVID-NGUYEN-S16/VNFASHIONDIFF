@@ -5,10 +5,9 @@ wandb:
   name: "LDM-EncoderVN"
 use_attention_mask: True
 max_length : 512
-path_checkpoint: null
 input_perturbation : 0
 pretrained_model_name_or_path :  "prompthero/openjourney"
-path_fineturn_model : null
+path_fineturn_model : "/kaggle/input/vnfashion-misjoy-xls"
 revision : null
 variant : null
 dataset_name : null
