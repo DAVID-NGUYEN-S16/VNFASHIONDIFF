@@ -14,7 +14,7 @@ def main():
     
     
     ## config global
-    path_config  = "./config_caption_nike.yaml"
+    path_config  = "./config_caption_GLAMI.yaml"
     
     config = load_config(path_config)
 
@@ -84,7 +84,7 @@ def main():
             write_json(f"{config.name_data}.json", data)
             
     accelerator.wait_for_everyone() 
-    
+    write_json(f"{config.name_data}.json", data)
     
         
     accelerator.end_training()
