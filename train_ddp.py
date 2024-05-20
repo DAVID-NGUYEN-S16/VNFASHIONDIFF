@@ -84,6 +84,9 @@ def load_models(config):
             use_attention_mask = config.use_attention_mask,
             max_length = config.max_length
         )
+        del model_encoderx, unet, noise_scheduler, text_encoder
+        torch.cuda.empty_cache()
+        gc.collect()
         return model, tokenizer
 def collate_fn(examples):
     pixel_values = torch.stack([example["pixel_values"] for example in examples])
