@@ -209,18 +209,18 @@ def main():
     )
     
     # load_model(model, f"{config.path_fineturn_model}/model.safetensors")
-
+    if config.path_fineturn_model:
+        print(f"Update weight {config.path_fineturn_model}")
+        load_model(model, f"{config.path_fineturn_model}/model.safetensors")
+        # Clean memory
+        torch.cuda.empty_cache()
+        gc.collect()
     # Prepare everything with our `accelerator`.
     model, optimizer, train_dataloader, lr_scheduler = accelerator.prepare(
         model, optimizer, train_dataloader, lr_scheduler
     )
     
-    if config.path_fineturn_model:
-        print(f"Update weight {config.path_fineturn_model}")
-        accelerator.load_state(config.path_fineturn_model)
-        # Clean memory
-        torch.cuda.empty_cache()
-        gc.collect()
+    
 
     weight_dtype = torch.float32
 
