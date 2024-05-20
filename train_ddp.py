@@ -321,14 +321,7 @@ def train(gpu_id, world_size, rank):
         
         train_loss = round(train_loss/len(train_dataloader), 4)
 
-        accelerator.log(
-            {
-                
-                'Train loss': train_loss, 
-                # 'Test loss': test_loss
-            },
-            step=global_step
-        )
+        
         
         if min_loss == None or train_loss <= min_loss and gpu_id == 0:
             save_path = os.path.join(config.output_dir, f"best")
@@ -342,11 +335,19 @@ def train(gpu_id, world_size, rank):
                 image = wandb.Image(img, caption=cap)
                 image_eval.append(image)
             accelerator.log({"images": image_eval})
-        
-        print({
-                'epoch':epoch, 
-                'Train loss': train_loss, 
-            })
+        if gpu_id == 0:
+            accelerator.log(
+                {
+                    
+                    'Train loss': train_loss, 
+                    # 'Test loss': test_loss
+                },
+                step=global_step
+            )
+            print({
+                    'epoch':epoch, 
+                    'Train loss': train_loss, 
+                })
 
         train_loss = 0.0
     accelerator.end_training()
