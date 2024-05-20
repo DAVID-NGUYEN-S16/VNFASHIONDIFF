@@ -43,7 +43,7 @@ class LatenFashionDIFF(nn.Module):
         bsz = latents.shape[0]
         
         # get time step 
-        timesteps = torch.randint(0, self.process_diffusion.config.num_train_timesteps, (bsz,), device=latents.device)
+        timesteps = torch.randint(0, self.process_diffusion.config.num_train_timesteps, (bsz,))
         timesteps = timesteps.long()
         
         #get value of P(x_1|x_0)
@@ -63,7 +63,7 @@ class LatenFashionDIFF(nn.Module):
         model_pred = self.model(x = noisy_latents, time_steps = timesteps, context = encoder_hidden_states)[0]
         
         return target, model_pred
-    def set_up(self):
+    def set_up(self, device):
         self.pipeline = PIPELINE_VNFASHION(
             vae=self.vae,
             text_encoder=self.text_encoder,
@@ -71,7 +71,7 @@ class LatenFashionDIFF(nn.Module):
             unet=self.model.diffusion_model,
             scheduler = self.process_diffusion,
             max_length = self.max_length,
-            device = self.vae.device,
+            device = device,
             use_attention_mask= self.use_attention_mask
         )
     def inference(self, text = None):

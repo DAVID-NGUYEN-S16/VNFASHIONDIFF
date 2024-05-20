@@ -288,6 +288,7 @@ def train(gpu_id, world_size, rank):
         model.train()
         train_loss = 0.0
         for step, batch in enumerate(train_dataloader):
+            torch.cuda.empty_cache()
             with accelerator.accumulate(model):
                 # Convert images to latent space
                 batch["pixel_values"] =batch["pixel_values"].to(gpu_id).to(weight_dtype)
@@ -333,7 +334,7 @@ def train(gpu_id, world_size, rank):
             min_loss = train_loss
             print("Save model")
             image_eval = []
-            accelerator.unwrap_model(model).set_up()
+            accelerator.unwrap_model(model).set_up(gpu_id)
             images, caption = accelerator.unwrap_model(model).inference()
             for img, cap in zip(images, caption):
                 image = wandb.Image(img, caption=cap)
@@ -363,5 +364,5 @@ def process(rank, world_size):
 if __name__ == "__main__":
     world_size = torch.cuda.device_count()
     print(f" Using {world_size} GPUs")
-    mp.spawn(process, args=(world_size, ), nprocs=world_size)
+    mp.spawn(process, args=(world_size, ), nprocs=world_size, join=True)
 
