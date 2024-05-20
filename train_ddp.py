@@ -261,8 +261,8 @@ def train(gpu_id, world_size, rank):
     weight_dtype = torch.float32
 
     # Move text_encode and vae to gpu and cast to weight_dtype
-    model.module.text_encoder.to(gpu_id, dtype=weight_dtype)
-    model.module.vae.to(gpu_id, dtype=weight_dtype)
+    # model.module.text_encoder.to(gpu_id, dtype=weight_dtype)
+    # model.module.vae.to(gpu_id, dtype=weight_dtype)
     # We need to recalculate our total training steps as the size of the training dataloader may have changed.
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / config.gradient_accumulation_steps)
     
@@ -316,6 +316,7 @@ def train(gpu_id, world_size, rank):
                 # Gather the losses across all processes for logging (if we use distributed training).
                 avg_loss = accelerator.gather(loss.repeat(config.train_batch_size)).mean()
                 train_loss += avg_loss.item() / config.gradient_accumulation_steps
+                
                 # Backpropagate
                 accelerator.backward(loss)
                 if accelerator.sync_gradients:
@@ -323,6 +324,7 @@ def train(gpu_id, world_size, rank):
                 optimizer.step()
                 lr_scheduler.step()
                 optimizer.zero_grad()
+
             logs = {"step": f",{step}/{len(train_dataloader)}", "step_loss": loss.detach().item(), "lr": lr_scheduler.get_last_lr()[0]}
             progress_bar.set_postfix(**logs)
 
