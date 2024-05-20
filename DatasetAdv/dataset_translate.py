@@ -19,7 +19,7 @@ class DataImageADV(Dataset):
         self.tokenizer = AutoTokenizer.from_pretrained("vinai/vinai-translate-en2vi-v2", src_lang="en_XX")
 
  
-        with open(config.path_data, "r") as file:
+        with open(config.path_json, "r") as file:
             self.path_images = json.load(file)
         
 
