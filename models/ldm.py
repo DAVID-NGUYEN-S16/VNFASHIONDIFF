@@ -43,7 +43,7 @@ class LatenFashionDIFF(nn.Module):
         bsz = latents.shape[0]
         
         # get time step 
-        timesteps = torch.randint(0, self.process_diffusion.config.num_train_timesteps, (bsz,))
+        timesteps = torch.randint(0, self.process_diffusion.config.num_train_timesteps, (bsz,)).to(pixel_values.device)
         timesteps = timesteps.long()
         
         #get value of P(x_1|x_0)
