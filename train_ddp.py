@@ -28,6 +28,7 @@ from torch.utils.data.distributed import DistributedSampler
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.distributed import init_process_group, destroy_process_group
 import os
+from safetensors.torch import load_model, save_model
 
 def ddp_setup(rank, world_size):
     """
@@ -225,6 +226,15 @@ def train(gpu_id, world_size, rank):
         num_warmup_steps=config.lr_warmup_steps * accelerator.num_processes,
         num_training_steps=config.max_train_steps * accelerator.num_processes,
     )
+    if config.path_fineturn_model:
+        print(f"Update weight {config.path_fineturn_model}")
+        load_model(model, f"{config.path_fineturn_model}/model.safetensors")
+        # accelerator.load_state(config.path_fineturn_model)
+        print('oke')
+
+        # Clean memory
+        torch.cuda.empty_cache()
+        gc.collect()
     
     # Prepare everything with our `accelerator`.
     model, optimizer, train_dataloader, lr_scheduler = accelerator.prepare(
@@ -233,14 +243,7 @@ def train(gpu_id, world_size, rank):
     
     
     
-    if config.path_fineturn_model:
-        print(f"Update weight {config.path_fineturn_model}")
-        accelerator.load_state(config.path_fineturn_model)
-        print('oke')
-
-        # Clean memory
-        torch.cuda.empty_cache()
-        gc.collect()
+    
 
     weight_dtype = torch.float32
 
