@@ -69,7 +69,8 @@ class LatenFashionDIFF(nn.Module):
         if timesteps.device != target_device:
             print("timesteps")
             timesteps.to(target_device)
-            
+        
+        print(encoder_hidden_states.device)
         if encoder_hidden_states.device != target_device:
             print("encoder_hidden_states")
             encoder_hidden_states.to(target_device)
