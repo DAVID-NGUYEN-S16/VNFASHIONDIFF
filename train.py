@@ -367,7 +367,7 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
-    print(torch.cuda.is_initialized())
-    notebook_launcher(main, args=(), num_processes=1)
+    main()
+    # print(torch.cuda.is_initialized())
+    # notebook_launcher(main, args=(), num_processes=1)
 
