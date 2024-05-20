@@ -23,7 +23,7 @@ seed : 40
 resolution : 128
 center_crop : False
 random_flip : False
-train_batch_size : 32
+train_batch_size : 64
 num_train_epochs : 100
 max_train_steps : null
 gradient_accumulation_steps : 67
