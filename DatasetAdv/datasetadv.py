@@ -9,21 +9,17 @@ import numpy as np
 import json
 from transformers import BlipProcessor, BlipForConditionalGeneration
 import glob
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-
 class DataImageADV(Dataset):
     
     def __init__(self,
                  config
                  ):
-        self.tokenizer = AutoModelForSeq2SeqLM.from_pretrained("vinai/vinai-translate-en2vi-v2")
-
-        self.path_images = glob.glob(f"{config.path_data}*.jpg")
+        self.processor = BlipProcessor.from_pretrained(config.name_model)
+        print(f"Start: {config.start} --> {config.end}")
+        self.path_images = glob.glob(f"{config.path_data}*.jpg")[config.start: config.end]
+        
  
-        # with open(config.path_json, "r") as file:
-        #     self.path_images = json.load(file)
-        # self.path_images = self.path_images['image']
-        # self.path_images = [f for f in self.path_images if "cv-ck-dataset" in f]
+        
         
 
     def __len__(self):
