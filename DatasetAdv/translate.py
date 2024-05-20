@@ -86,7 +86,7 @@ def main(path_config):
             write_json(f"{config.name_data}.json", data)
             
     accelerator.wait_for_everyone() 
-    write_json(f"{config.name_data}.json", data)
+    write_json(f"{config.name_data}_translate.json", data)
     
         
     accelerator.end_training()
