@@ -3,4 +3,4 @@ path_data: "/kaggle/input/cv-ck-crawl/uniqlo_final/uniqlo/"
 batch_size: 150
 name_data: "uniqlo"
 output_dir: "./output"
-path_json: 
+path_json: "uniqlo.json"
