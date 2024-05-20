@@ -11,11 +11,8 @@ from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 from utils import load_config, write_json
-def main():
-    
-    
-    ## config global
-    path_config  = "./config_meta.yaml"
+def main(path_config):
+
     
     config = load_config(path_config)
 
@@ -55,7 +52,6 @@ def main():
     )
     
  
-    weight_dtype = torch.float32
  
     data = {'image': [], "text": []}
     model.eval()
@@ -97,8 +93,10 @@ def main():
 
 
 if __name__ == "__main__":
-    
-    # paths = glob.glob("./DatasetAdv/*.yaml")
-    # for path in paths:
-    notebook_launcher(main, args=(), num_processes=2)
+    import argparse
+    parser = argparse.ArgumentParser(description='Translate text')
+    parser.add_argument('path_config', type=str, help='path config')
+   
+    args = parser.parse_args()
+    notebook_launcher(main, args=(args.path_config), num_processes=2)
 

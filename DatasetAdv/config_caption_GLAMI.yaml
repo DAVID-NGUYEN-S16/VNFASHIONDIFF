@@ -5,3 +5,4 @@ name_data: "GLAMI"
 output_dir: "./output"
 start: 280000
 end: 350000
+path_json: "/kaggle/input/glame-adv/70000.140000.json"

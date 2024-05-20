@@ -1,5 +1,6 @@
 name_model: "Salesforce/blip-image-captioning-large"
-path_data: "/kaggle/input/data-adv-t2i/meta.json"
+path_data: null
 batch_size: 1
 name_data: "meta"
 output_dir: "./output"
+path_json: "/kaggle/input/data-adv-t2i/meta.json"

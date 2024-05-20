@@ -10,11 +10,8 @@ from accelerate import notebook_launcher
 from tqdm import tqdm
 
 from utils import load_config, write_json
-def main():
+def main(path_config):
     
-    
-    ## config global
-    path_config  = "./config_caption_GLAMI.yaml"
     
     config = load_config(path_config)
 
@@ -38,6 +35,7 @@ def main():
     test_dataset = DataImageADV(
         config=config
     )
+    print(f"Config: {path_config}")
     print(f"Length Dataset: {len(test_dataset)}")
     print(f"Batch size: {config.batch_size}")
     test_dataloader = torch.utils.data.DataLoader(
@@ -92,7 +90,12 @@ def main():
 
 if __name__ == "__main__":
     
-    # paths = glob.glob("./DatasetAdv/*.yaml")
-    # for path in paths:
-    notebook_launcher(main, args=(), num_processes=2)
+    import argparse
+    parser = argparse.ArgumentParser(description='Get caption')
+    parser.add_argument('path_config', type=str, help='path config')
+   
+    args = parser.parse_args()
+    notebook_launcher(main, args=(args.path_config), num_processes=2)
+
+
 

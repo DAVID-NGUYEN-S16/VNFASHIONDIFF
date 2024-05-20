@@ -20,7 +20,7 @@ class DataImageADV(Dataset):
 
         # self.path_images = glob.glob(f"{config.path_data}*.jpg")
  
-        with open(config.path_data, "r") as file:
+        with open(config.path_json, "r") as file:
             self.path_images = json.load(file)
         self.path_images = self.path_images['image']
         self.path_images = [f for f in self.path_images if "cv-ck-dataset" in f]
