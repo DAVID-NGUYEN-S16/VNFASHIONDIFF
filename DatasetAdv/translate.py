@@ -98,5 +98,5 @@ if __name__ == "__main__":
     parser.add_argument('path_config', type=str, help='path config')
    
     args = parser.parse_args()
-    notebook_launcher(main, args=(args.path_config), num_processes=2)
+    notebook_launcher(main, args=(args.path_config, ), num_processes=2)
 
