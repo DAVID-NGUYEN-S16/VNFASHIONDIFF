@@ -74,7 +74,7 @@ class LatenFashionDIFF(nn.Module):
       
         model_pred = self.model(x = noisy_latents, time_steps = timesteps, context = encoder_hidden_states)[0]
         
-        return target, model_pred
+        return target.to(target_device), model_pred
     def set_up(self, device):
         self.pipeline = PIPELINE_VNFASHION(
             vae=self.vae,
