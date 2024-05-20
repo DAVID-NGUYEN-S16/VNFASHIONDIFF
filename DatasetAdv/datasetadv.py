@@ -15,13 +15,8 @@ class DataImageADV(Dataset):
                  config
                  ):
         self.processor = BlipProcessor.from_pretrained(config.name_model)
-        print(f"Start: {config.start} --> {config.end}")
-        self.path_images = glob.glob(f"{config.path_data}*.jpg")[config.start: config.end]
+        self.path_images = glob.glob(f"{config.path_data}*.jpg")
         
- 
-        
-        
-
     def __len__(self):
         return len(self.path_images)
 
