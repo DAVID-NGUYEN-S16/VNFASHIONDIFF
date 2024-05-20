@@ -24,6 +24,7 @@ import torch.multiprocessing as mp
 import gc
 import wandb
 from multilingual_clip import pt_multilingual_clip
+from safetensors.torch import load_model, save_model
 
 def load_models(config):
         # Load scheduler, tokenizer and models.
@@ -216,6 +217,7 @@ def main():
         num_warmup_steps=config.lr_warmup_steps * accelerator.num_processes,
         num_training_steps=config.max_train_steps * accelerator.num_processes,
     )
+    load_model(model, f"{config.path_fineturn_model}/model.safetensors")
 
     # Prepare everything with our `accelerator`.
     model, optimizer, train_dataloader, lr_scheduler = accelerator.prepare(
