@@ -205,7 +205,7 @@ def train(gpu_id, world_size, rank):
         # Clean memory
         torch.cuda.empty_cache()
         gc.collect()
-    # model.to(gpu_id)
+    model.to(gpu_id)
     model = DDP(model, device_ids=[gpu_id])
 
     model = setting_compute_model(config=config, model=model)
