@@ -145,7 +145,8 @@ def setting_compute_model(config, model):
         torch.backends.cuda.matmul.allow_tf32 = True
     return model
 
-def setting_accelerate(config):
+def setting_accelerate(config, rank):
+    
     logger = get_logger(__name__, log_level="INFO")
 
     wandb.login(key=config.wandb['key_wandb'])
@@ -158,10 +159,12 @@ def setting_accelerate(config):
         log_with=config.report_to,
         gradient_accumulation_steps=config.gradient_accumulation_steps,
         mixed_precision=config.mixed_precision,
-        
+        device_placement=True, 
         project_config=accelerator_project_config,
     )
-
+    device = torch.device(f'cuda:{rank}' if torch.cuda.is_available() else 'cpu')
+    accelerator.state.device = device
+    
     accelerator.init_trackers(
         project_name = config.wandb['project'],
         init_kwargs={"wandb": {"entity": "davidnguyen", 'tags': config.wandb['tags'], 'name': config.wandb['name']}}
@@ -192,8 +195,8 @@ def train(gpu_id, world_size, rank):
     path_config  = "./config.yaml"
     
     config = load_config(path_config)
-
-    accelerator = setting_accelerate(config=config)
+    
+    accelerator = setting_accelerate(config=config, rank=gpu_id)
 
     model, tokenizer = load_models(config)
     if config.path_fineturn_model:
@@ -205,9 +208,9 @@ def train(gpu_id, world_size, rank):
         # Clean memory
         torch.cuda.empty_cache()
         gc.collect()
+    
     model.to(gpu_id)
     model = DDP(model, device_ids=[gpu_id])
-
     model = setting_compute_model(config=config, model=model)
     
     optimizer_cls = setting_optimizer(config=config)
@@ -278,9 +281,6 @@ def train(gpu_id, world_size, rank):
     
     
     min_loss = None
-    start_time = time.time()
-
-    print(f"Device: {accelerator.device}")
     
     for epoch in range(first_epoch, config.num_train_epochs):
         sampler.set_epoch(epoch)
