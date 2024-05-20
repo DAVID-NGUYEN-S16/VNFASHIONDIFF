@@ -121,7 +121,7 @@ def main():
     accelerator = Accelerator(
         
         log_with=config.report_to,
-        gradient_accumulation_steps=config.gradient_accumulation_steps,
+        # gradient_accumulation_steps=config.gradient_accumulation_steps,
         mixed_precision=config.mixed_precision,
         gradient_accumulation_plugin=gradient_accumulation_plugin,
         project_config=accelerator_project_config,
