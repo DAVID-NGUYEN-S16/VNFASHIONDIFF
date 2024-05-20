@@ -34,14 +34,13 @@ class LatenFashionDIFF(nn.Module):
         # self.set_up()
     def forward(self, pixel_values, input_ids, attention_mask = None):
         
-        
+        # Compute in GPU 0
         latents = self.vae.encode(pixel_values).latent_dist.sample()
         latents = latents * self.scaling_factor
-        # create distribution of latens        
-        noise = torch.randn_like(latents)
-        
         bsz = latents.shape[0]
         
+        # create distribution of latens        
+        noise = torch.randn_like(latents)
         # get time step 
         timesteps = torch.randint(0, self.process_diffusion.config.num_train_timesteps, (bsz,)).to(pixel_values.device)
         timesteps = timesteps.long()
@@ -53,6 +52,7 @@ class LatenFashionDIFF(nn.Module):
         encoder_hidden_states = self.text_encoder(input_ids, attention_mask, return_dict=False)[0]
         
         
+        
         if self.process_diffusion.config.prediction_type == "epsilon":
             target = noise
         elif self.process_diffusion.config.prediction_type == "v_prediction":
@@ -60,6 +60,20 @@ class LatenFashionDIFF(nn.Module):
         else:
             raise ValueError(f"Unknown prediction type {self.process_diffusion.config.prediction_type}")
         
+        target_device = torch.device('cuda:0')
+        
+        if noisy_latents.device != target_device:
+            print("noisy_latents")
+            noisy_latents.to(target_device)
+            
+        if timesteps.device != target_device:
+            print("timesteps")
+            timesteps.to(target_device)
+            
+        if encoder_hidden_states.device != target_device:
+            print("encoder_hidden_states")
+            encoder_hidden_states.to(target_device)
+            
         model_pred = self.model(x = noisy_latents, time_steps = timesteps, context = encoder_hidden_states)[0]
         
         return target, model_pred
