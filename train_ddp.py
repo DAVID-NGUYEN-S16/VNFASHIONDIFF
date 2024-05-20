@@ -155,6 +155,9 @@ def setting_accelerate(config, rank):
     logging_dir = os.path.join(config.output_dir, config.logging_dir)
 
     accelerator_project_config = ProjectConfiguration(project_dir=config.output_dir, logging_dir=logging_dir)
+    
+    # https://huggingface.co/docs/accelerate/concept_guides/gradient_synchronization
+    # When accumulation gradient update it out of memory
     gradient_accumulation_plugin = GradientAccumulationPlugin(
         num_steps=config.gradient_accumulation_steps,
         sync_each_batch = True
