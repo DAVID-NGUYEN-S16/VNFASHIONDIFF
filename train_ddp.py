@@ -155,12 +155,15 @@ def setting_accelerate(config, rank):
     logging_dir = os.path.join(config.output_dir, config.logging_dir)
 
     accelerator_project_config = ProjectConfiguration(project_dir=config.output_dir, logging_dir=logging_dir)
-    gradient_accumulation_plugin = GradientAccumulationPlugin(num_steps=config.gradient_accumulation_steps)
+    gradient_accumulation_plugin = GradientAccumulationPlugin(
+        num_steps=config.gradient_accumulation_steps,
+        sync_each_batch = True
+        )
 
     accelerator = Accelerator(
         log_with=config.report_to,
         gradient_accumulation_plugin=gradient_accumulation_plugin,
-        sync_each_batch = True,
+        
         mixed_precision=config.mixed_precision,
         device_placement=True, 
         project_config=accelerator_project_config,
