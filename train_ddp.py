@@ -113,6 +113,7 @@ def load_dataset(config, tokenizer, world_size, rank):
             shuffle=False,
             collate_fn=collate_fn,
             batch_size=config.train_batch_size,
+            pin_memory=True,
             sampler=DistributedSampler(train_dataset)
         )
     return train_dataloader, sampler
@@ -324,6 +325,9 @@ def train(gpu_id, world_size, rank):
                 optimizer.step()
                 lr_scheduler.step()
                 optimizer.zero_grad()
+                if loss.detach().item() == 0.0:
+                    print("Error Loss")
+                    return
 
             logs = {"step": f",{step}/{len(train_dataloader)}", "step_loss": loss.detach().item(), "lr": lr_scheduler.get_last_lr()[0]}
             progress_bar.set_postfix(**logs)
