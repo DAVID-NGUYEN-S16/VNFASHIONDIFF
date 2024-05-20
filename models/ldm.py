@@ -63,19 +63,15 @@ class LatenFashionDIFF(nn.Module):
         target_device = torch.device('cuda:0')
         
         if noisy_latents.device != target_device:
-            print("noisy_latents")
             noisy_latents = noisy_latents.to(target_device)
             
         if timesteps.device != target_device:
-            print("timesteps")
             timesteps = timesteps.to(target_device)
         
         
         if encoder_hidden_states.device != target_device:
-            print("encoder_hidden_states")
             encoder_hidden_states = encoder_hidden_states.to(target_device)
-        print(encoder_hidden_states.device, timesteps.device, noisy_latents.device)
-        print(self.model.device)
+      
         model_pred = self.model(x = noisy_latents, time_steps = timesteps, context = encoder_hidden_states)[0]
         
         return target, model_pred
