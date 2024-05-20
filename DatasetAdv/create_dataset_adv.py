@@ -12,7 +12,7 @@ from tqdm import tqdm
 from utils import load_config, write_json
 def main(path_config):
     
-    
+    print(f"Config: {path_config}")
     config = load_config(path_config)
 
     accelerator_project_config = ProjectConfiguration(project_dir=config.output_dir)
