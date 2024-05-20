@@ -9,6 +9,7 @@ import numpy as np
 import json
 from transformers import BlipProcessor, BlipForConditionalGeneration
 import glob
+from utils import check_path_image
 class DataImageADV(Dataset):
     
     def __init__(self,
@@ -16,7 +17,7 @@ class DataImageADV(Dataset):
                  ):
         self.processor = BlipProcessor.from_pretrained(config.name_model)
         self.path_images = glob.glob(f"{config.path_data}*.jpg")
-        
+        self.path_images = [img for img in self.path_images if check_path_image(img)]
     def __len__(self):
         return len(self.path_images)
 
