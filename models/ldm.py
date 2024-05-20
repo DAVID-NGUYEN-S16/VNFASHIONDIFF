@@ -70,11 +70,12 @@ class LatenFashionDIFF(nn.Module):
             print("timesteps")
             timesteps.to(target_device)
         
-        print(encoder_hidden_states.device)
+        
         if encoder_hidden_states.device != target_device:
             print("encoder_hidden_states")
             encoder_hidden_states.to(target_device)
-            
+        print(encoder_hidden_states.device, timesteps.device, noisy_latents.device)
+        print(self.model.device)
         model_pred = self.model(x = noisy_latents, time_steps = timesteps, context = encoder_hidden_states)[0]
         
         return target, model_pred
