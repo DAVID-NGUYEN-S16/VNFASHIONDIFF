@@ -196,7 +196,16 @@ def train(gpu_id, world_size, rank):
     accelerator = setting_accelerate(config=config)
 
     model, tokenizer = load_models(config)
-    model.to(gpu_id)
+    if config.path_fineturn_model:
+        print(f"Update weight {config.path_fineturn_model}")
+        load_model(model, f"{config.path_fineturn_model}/model.safetensors")
+        # accelerator.load_state(config.path_fineturn_model)
+        print('oke')
+
+        # Clean memory
+        torch.cuda.empty_cache()
+        gc.collect()
+    # model.to(gpu_id)
     model = DDP(model, device_ids=[gpu_id])
 
     model = setting_compute_model(config=config, model=model)
@@ -226,15 +235,7 @@ def train(gpu_id, world_size, rank):
         num_warmup_steps=config.lr_warmup_steps * accelerator.num_processes,
         num_training_steps=config.max_train_steps * accelerator.num_processes,
     )
-    if config.path_fineturn_model:
-        print(f"Update weight {config.path_fineturn_model}")
-        load_model(model, f"{config.path_fineturn_model}/model.safetensors")
-        # accelerator.load_state(config.path_fineturn_model)
-        print('oke')
-
-        # Clean memory
-        torch.cuda.empty_cache()
-        gc.collect()
+    
     
     # Prepare everything with our `accelerator`.
     model, optimizer, train_dataloader, lr_scheduler = accelerator.prepare(
