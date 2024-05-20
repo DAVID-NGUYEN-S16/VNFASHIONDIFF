@@ -23,6 +23,7 @@ from accelerate import notebook_launcher
 import torch.multiprocessing as mp
 import gc
 import wandb
+from accelerate.utils import GradientAccumulationPlugin
 from multilingual_clip import pt_multilingual_clip
 from safetensors.torch import load_model, save_model
 
@@ -112,11 +113,17 @@ def main():
 
     accelerator_project_config = ProjectConfiguration(project_dir=config.output_dir, logging_dir=logging_dir)
 
+    
+    gradient_accumulation_plugin = GradientAccumulationPlugin(
+        num_steps=config.gradient_accumulation_steps,
+        sync_each_batch = True
+        )
     accelerator = Accelerator(
+        
         log_with=config.report_to,
         gradient_accumulation_steps=config.gradient_accumulation_steps,
         mixed_precision=config.mixed_precision,
-        
+        gradient_accumulation_plugin=gradient_accumulation_plugin,
         project_config=accelerator_project_config,
     )
     
