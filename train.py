@@ -185,23 +185,6 @@ def main():
             collate_fn=collate_fn,
             batch_size=config.train_batch_size,
         )
-    
-    # test_dataset = DataFASSHIONDIFF(
-    #     path_meta = config.data['train'],
-    #     size= config.data['size'],
-    #     interpolation="bicubic",
-    #     flip_p=0.5, 
-    #     tokenizer = tokenizer,
-    #     train = False
-    # )
-    
-    # test_dataloader = torch.utils.data.DataLoader(
-    #         test_dataset,
-    #         shuffle=True,
-    #         collate_fn=collate_fn,
-    #         batch_size=config.train_batch_size,
-    # )
-    
 
     # Scheduler and math around the number of training steps.
     overrode_max_train_steps = False
@@ -217,7 +200,8 @@ def main():
         num_warmup_steps=config.lr_warmup_steps * accelerator.num_processes,
         num_training_steps=config.max_train_steps * accelerator.num_processes,
     )
-    load_model(model, f"{config.path_fineturn_model}/model.safetensors")
+    
+    # load_model(model, f"{config.path_fineturn_model}/model.safetensors")
 
     # Prepare everything with our `accelerator`.
     model, optimizer, train_dataloader, lr_scheduler = accelerator.prepare(
@@ -309,31 +293,6 @@ def main():
 
            
             global_step+=1
-            # if step == 1: break
-            
-        # start_time = time.time()
-        # model.eval()
-        # test_loss = 0.0
-        # with torch.no_grad():
-        #     for step, batch in enumerate(test_dataloader):
-        #         with accelerator.accumulate(model):
-        #             # Convert images to latent space
-        #             batch["pixel_values"] =batch["pixel_values"].to(accelerator.device).to(weight_dtype)
-        #             batch["input_ids"] =batch["input_ids"].to(accelerator.device).to(weight_dtype).long()
-                    
-                    
-                    
-        #             # Predict the noise residual and compute loss
-        #             target, model_pred = model(pixel_values = batch["pixel_values"], input_ids = batch["input_ids"])
-
-        #             loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
-    
-
-        #             # Gather the losses across all processes for logging (if we use distributed training).
-        #             avg_loss = accelerator.gather(loss.repeat(config.train_batch_size)).mean()
-        #             test_loss += avg_loss.item() / config.gradient_accumulation_steps
-
-                # if step == 1: break
 
         accelerator.wait_for_everyone() 
         
@@ -373,6 +332,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    # print(torch.cuda.is_initialized())
-    # notebook_launcher(main, args=(), num_processes=1)
-
