@@ -75,7 +75,7 @@ class LatenFashionDIFF(nn.Module):
         model_pred = self.model(x = noisy_latents, time_steps = timesteps, context = encoder_hidden_states)[0]
         
         return target.to(target_device), model_pred
-    def set_up(self, device):
+    def set_up(self, device = "cuda:0"):
         self.pipeline = PIPELINE_VNFASHION(
             vae=self.vae,
             text_encoder=self.text_encoder,
@@ -83,7 +83,7 @@ class LatenFashionDIFF(nn.Module):
             unet=self.model.diffusion_model,
             scheduler = self.process_diffusion,
             max_length = self.max_length,
-            device = device,
+            device = self.vae.device,
             use_attention_mask= self.use_attention_mask
         )
     def inference(self, text = None):

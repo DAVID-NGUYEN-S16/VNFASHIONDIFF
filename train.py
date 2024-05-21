@@ -302,6 +302,7 @@ def main():
 
            
             global_step+=1
+            if step == 1: break
 
         accelerator.wait_for_everyone() 
         
