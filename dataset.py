@@ -54,6 +54,7 @@ class DataFASSHIONDIFF(Dataset):
             self.meta = json.load(file)
         
         self._length = len(self.meta['image'])
+        print(path_meta)
         print(self._length)
         self.tokenizer = tokenizer
         self.max_length = max_length
