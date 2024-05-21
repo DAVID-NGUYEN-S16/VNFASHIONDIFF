@@ -26,7 +26,10 @@ import wandb
 from accelerate.utils import GradientAccumulationPlugin
 from multilingual_clip import pt_multilingual_clip
 from safetensors.torch import load_model, save_model
-
+def count_parameters(model):
+    total_params = sum(p.numel() for p in model.parameters())
+    print(f"Total number of parameters: {total_params}")
+    
 def load_models(config):
         # Load scheduler, tokenizer and models.
         noise_scheduler = DDPMScheduler.from_pretrained(config.pretrained_model_name_or_path, subfolder="scheduler")
@@ -71,7 +74,7 @@ def load_models(config):
             use_attention_mask = config.use_attention_mask,
             max_length = config.max_length
         )
-        
+        count_parameters
         del model_encoderx, unet, noise_scheduler, text_encoder
         torch.cuda.empty_cache()
         gc.collect()
