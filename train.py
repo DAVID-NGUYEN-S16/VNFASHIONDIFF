@@ -211,7 +211,8 @@ def main():
     # load_model(model, f"{config.path_fineturn_model}/model.safetensors")
     if config.path_fineturn_model:
         print(f"Update weight {config.path_fineturn_model}")
-        load_model(model, f"{config.path_fineturn_model}/model.safetensors")
+        accelerator.load_state(config.path_fineturn_model)
+        # load_model(model, f"{config.path_fineturn_model}/model.safetensors")
         # Clean memory
         torch.cuda.empty_cache()
         gc.collect()
@@ -225,8 +226,8 @@ def main():
     weight_dtype = torch.float32
 
     # Move text_encode and vae to gpu and cast to weight_dtype
-    # accelerator.unwrap_model(model).text_encoder.to(accelerator.device, dtype=weight_dtype)
-    # accelerator.unwrap_model(model).vae.to(accelerator.device, dtype=weight_dtype)
+    accelerator.unwrap_model(model).text_encoder.to(accelerator.device, dtype=weight_dtype)
+    accelerator.unwrap_model(model).vae.to(accelerator.device, dtype=weight_dtype)
     # We need to recalculate our total training steps as the size of the training dataloader may have changed.
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / config.gradient_accumulation_steps)
     
@@ -269,6 +270,7 @@ def main():
         train_loss = 0.0
         for step, batch in enumerate(train_dataloader):
             with accelerator.accumulate(model):
+                
                 # Convert images to latent space
                 batch["pixel_values"] =batch["pixel_values"].to(accelerator.device).to(weight_dtype)
                 batch["input_ids"] =batch["input_ids"].to(accelerator.device).to(weight_dtype).long()
