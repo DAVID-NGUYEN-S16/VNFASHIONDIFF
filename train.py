@@ -41,6 +41,7 @@ def load_models(config):
         model_encoderx = pt_multilingual_clip.MultilingualCLIP.from_pretrained('M-CLIP/XLM-Roberta-Large-Vit-L-14')
         
         text_encoder = VNCLIPEncoder(model_encoderx, load_config("./config_clip.yaml"))
+        
         vae = AutoencoderKL.from_pretrained(
             config.pretrained_model_name_or_path, subfolder="vae", revision=config.revision, variant=config.variant
         )
