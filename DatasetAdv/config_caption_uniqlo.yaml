@@ -1,0 +1,6 @@
+name_model: "Salesforce/blip-image-captioning-large"
+path_data: "/kaggle/input/cv-ck-crawl/uniqlo_final/uniqlo/"
+batch_size: 150
+name_data: "uniqlo"
+output_dir: "./output"
+path_json: "/kaggle/working/Text-to-Image-VNFASHIONDIFF/DatasetAdv/uniqlo.json"

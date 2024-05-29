@@ -1,0 +1,8 @@
+name_model: "Salesforce/blip-image-captioning-large"
+path_data: "/kaggle/input/data-train/data_train.json"
+batch_size: 150
+name_data: "GLAMI"
+output_dir: "./output"
+start: 280000
+end: 350000
+path_json: "/kaggle/input/glame-adv/data_eval1000_eng.json"
