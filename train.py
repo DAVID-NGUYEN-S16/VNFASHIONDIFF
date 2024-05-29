@@ -37,14 +37,14 @@ def load_models(config):
  
         tokenizer = transformers.AutoTokenizer.from_pretrained('M-CLIP/XLM-Roberta-Large-Vit-L-14')
 
-
-        model_encoderx = pt_multilingual_clip.MultilingualCLIP.from_pretrained('M-CLIP/XLM-Roberta-Large-Vit-L-14')
-        
-        text_encoder = VNCLIPEncoder(model_encoderx, load_config("./config_clip.yaml"))
-        
-        vae = AutoencoderKL.from_pretrained(
-            config.pretrained_model_name_or_path, subfolder="vae", revision=config.revision, variant=config.variant
-        )
+        with ContextManagers(deepspeed_zero_init_disabled_context_manager()):
+            model_encoderx = pt_multilingual_clip.MultilingualCLIP.from_pretrained('M-CLIP/XLM-Roberta-Large-Vit-L-14')
+            
+            text_encoder = VNCLIPEncoder(model_encoderx, load_config("./config_clip.yaml"))
+            
+            vae = AutoencoderKL.from_pretrained(
+                config.pretrained_model_name_or_path, subfolder="vae", revision=config.revision, variant=config.variant
+            )
 
         unet = UNet2DConditionModel.from_pretrained(
             config.pretrained_model_name_or_path, subfolder="unet", revision=config.non_ema_revision
