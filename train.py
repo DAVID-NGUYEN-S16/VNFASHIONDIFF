@@ -213,6 +213,8 @@ def main():
         disable=not accelerator.is_local_main_process,
     )
     min_loss = None
+    if config.loss_previous:
+        min_loss = config.loss_previous
     for epoch in range(config.num_train_epochs):
 
         model.train()
@@ -254,24 +256,23 @@ def main():
            
             global_step+=1
             # if step == 1: break
-        lr_scheduler.step()
+        
         
         train_loss = round(train_loss/len(train_dataloader), 4)
 
-        for param_group in optimizer.param_groups:
-            lr_current = param_group['lr']
-            break
         accelerator.log(
             {
                 
                 'Train loss': train_loss, 
-                "lr_current": lr_current
+                "lr_current": optimizer.param_groups[0]['lr']
                 # 'Test loss': test_loss
             },
             step=epoch
         )
+        lr_scheduler.step()
         
         if min_loss == None or train_loss <= min_loss:
+            model.eval()
             save_path = os.path.join(config.output_dir, f"best")
             accelerator.save_state(save_path)
             min_loss = train_loss
