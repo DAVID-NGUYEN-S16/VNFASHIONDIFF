@@ -51,8 +51,11 @@ class LatenFashionDIFF(nn.Module):
         #get value of P(x_1|x_0)
         noisy_latents = self.process_diffusion.add_noise(latents, noise, timesteps)
         
-        # Get the text embedding for conditioning
-        encoder_hidden_states = self.text_encoder(input_ids, attention_mask, return_dict=False)[0]
+        if self.use_attention_mask:
+            # Get the text embedding for conditioning
+            encoder_hidden_states = self.text_encoder(input_ids, attention_mask, return_dict=False)[0]
+        else:
+            encoder_hidden_states = self.text_encoder(input_ids, return_dict=False)[0]
         
         
         if self.process_diffusion.config.prediction_type == "epsilon":
