@@ -32,6 +32,7 @@ class LatenFashionDIFF(nn.Module):
         self.tokenizer = tokenizer
         self.max_length = max_length
         self.use_attention_mask = use_attention_mask
+        print(f"use_attention_mask: {self.use_attention_mask}")
         # self.set_up()
     def enable_gradient_checkpointing(self):
         self.model.enable_gradient_checkpointing()
