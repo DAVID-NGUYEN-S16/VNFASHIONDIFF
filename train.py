@@ -41,7 +41,7 @@ def load_models(config):
         # )
         with ContextManagers(deepspeed_zero_init_disabled_context_manager()):
             
-            text_encoder = VNCLIPEncoder('M-CLIP/LABSE-Vit-L-14', )
+            text_encoder = VNCLIPEncoder('M-CLIP/LABSE-Vit-L-14', clip_config)
             # tokenizer = CLIPTokenizer.from_pretrained(
             #     config.pretrained_model_name_or_path, subfolder="tokenizer", revision=config.revision
             # )
