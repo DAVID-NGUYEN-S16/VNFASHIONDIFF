@@ -77,7 +77,7 @@ def load_models(config):
             max_length = config.max_length
         )
         count_parameters(model)
-        del model_encoderx, unet, noise_scheduler, text_encoder
+        del text_encoder, unet, noise_scheduler, text_encoder
         torch.cuda.empty_cache()
         gc.collect()
         return model, tokenizer
