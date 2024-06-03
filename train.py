@@ -35,13 +35,20 @@ def load_models(config):
         # Diffusion process
         noise_scheduler = DDPMScheduler.from_pretrained(config.pretrained_model_name_or_path, subfolder="scheduler")
  
-        tokenizer = transformers.AutoTokenizer.from_pretrained('M-CLIP/XLM-Roberta-Large-Vit-L-14')
-
+        # tokenizer = transformers.AutoTokenizer.from_pretrained('M-CLIP/XLM-Roberta-Large-Vit-L-14')
+        tokenizer = CLIPTokenizer.from_pretrained(
+            config.pretrained_model_name_or_path, subfolder="tokenizer", revision=config.revision
+        )
         with ContextManagers(deepspeed_zero_init_disabled_context_manager()):
-            model_encoderx = pt_multilingual_clip.MultilingualCLIP.from_pretrained('M-CLIP/XLM-Roberta-Large-Vit-L-14')
+            # model_encoderx = pt_multilingual_clip.MultilingualCLIP.from_pretrained('M-CLIP/XLM-Roberta-Large-Vit-L-14')
             
-            text_encoder = VNCLIPEncoder(model_encoderx, load_config("./config_clip.yaml"))
-            
+            # text_encoder = VNCLIPEncoder(model_encoderx, load_config("./config_clip.yaml"))
+            tokenizer = CLIPTokenizer.from_pretrained(
+                config.pretrained_model_name_or_path, subfolder="tokenizer", revision=config.revision
+            )
+            text_encoder = CLIPTextModel.from_pretrained(
+                config.pretrained_model_name_or_path, subfolder="text_encoder", revision=config.revision, variant=config.variant
+            )
             vae = AutoencoderKL.from_pretrained(
                 config.pretrained_model_name_or_path, subfolder="vae", revision=config.revision, variant=config.variant
             )
@@ -298,6 +305,6 @@ def main():
 
 if __name__ == "__main__":
     # notebook_launcher()
-    main()
-    # notebook_launcher(main, args=(), num_processes=2)
+    # main()
+    notebook_launcher(main, args=(), num_processes=2)
 
