@@ -97,10 +97,10 @@ class DataFASSHIONDIFF(Dataset):
             
         text = self.meta['text'][i]
         
-        image = Image.open(path_image)
+        image = Image.open(path_image).convert('RGBA')
         
-        if not image.mode == "RGB":
-            image = image.convert("RGB")
+        # if not image.mode == "RGB":
+        #     image = image.convert("RGB")
 
         # default to score-sde preprocessing
         # img = np.array(image).astype(np.uint8)
