@@ -1,1 +1,2 @@
 use_attention_mask: False
+name_model: 'M-CLIP/LABSE-Vit-L-14'

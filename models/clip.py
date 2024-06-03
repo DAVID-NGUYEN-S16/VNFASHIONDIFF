@@ -1,10 +1,14 @@
 import torch.nn as nn
 import torch
+from multilingual_clip import pt_multilingual_clip
+
 class VNCLIPEncoder(nn.Module):
     def __init__(self, model, config = None):
         super().__init__()
+        
         self.config = config
         self.dtype = torch.float32
+        self.model = pt_multilingual_clip.MultilingualCLIP.from_pretrained(config.name_model)
         self.text_encoder = model.transformer
         self.linear_proj = model.LinearTransformation
         
