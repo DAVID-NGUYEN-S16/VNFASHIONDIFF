@@ -1,5 +1,5 @@
 wandb:
-  key_wandb: ac12c873f730f05f115d320f73a1a908c5db8470
+  key_wandb: 
   project: "Text-to-image-fashion"
   tags: "LDM-Full-Data"
   name: "LDM-EncoderVN"
